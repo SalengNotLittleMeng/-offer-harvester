@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>手写原型链</div>
+</body>
+<script>
+    function Parent(name) {
+        this.name = name;
+    }
+
+    function Child(name) {
+        Parent.call(this, name);
+        this.type = 'children';
+    }
+    console.log(Child.prototype)
+    console.log(Parent.prototype.constructor)
+    Child.prototype = Object.create(Parent.prototype);
+    console.log(Child)
+    Child.prototype.constructor = Child;
+
+    let child = new Child('children')
+        // console.log(child instanceof Number)
+</script>
+
+</html>

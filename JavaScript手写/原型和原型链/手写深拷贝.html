@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p>手写深拷贝</p>
+</body>
+<script>
+    function deepcopy(o) {
+        let obj = {};
+        for (i in o) {
+            if (typeof o[i] === 'object') {
+                obj[i] = deepcopy(o[i]);
+            } else {
+                obj[i] = o[i];
+            }
+        }
+        return obj
+    }
+    let a = {
+        name: 'a',
+        have: {
+            a: "a",
+            b: 'b'
+        }
+    }
+    let a2 = deepcopy(a);
+    console.log(a2)
+    console.log(a.have.a)
+</script>
+
+</html>

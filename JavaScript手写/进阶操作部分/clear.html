@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="button">提交</button>
+
+    <script>
+        let btn = document.getElementById("button");
+        btn.addEventListener('click', throttle(subit, 500), false)
+            // btn.addEventListener('click', subit, false)
+
+        function subit(e) {
+            console.log(e)
+            console.log("我被提交了")
+        }
+
+        function throttle(fn, delay) {
+            // 初始化一个时间
+            let begin = 0;
+            return function() {
+                // 获取当前时间戳
+                let cur = new Date().getTime();
+                // 只有两次触发的时间间隔大于指定值，才会触发事件函数
+                if (cur - begin > delay) {
+                    fn.apply(this, arguments);
+                    begin = cur;
+                }
+
+            }
+        }
+    </script>
+</body>
+
+</html>

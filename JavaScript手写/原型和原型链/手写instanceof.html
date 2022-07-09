@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p>手写instanceof</p>
+</body>
+<script>
+    function myinstanceof(l, r) {
+        let lp = l._proto_;
+        let rp = r.prototype;
+        while (true) {
+            if (lp === null) {
+                return false;
+            }
+            if (lp === rp) {
+                return true;
+            }
+            lp = lp._proto_
+        }
+    }
+    // console.log(myinstanceof(123, Number))
+    // 手写 is
+    Object.prototype.my_is = function(x, y) {
+        if (x == y) {
+            // 防止-0和+0
+            return x != 0 || 1 / x == 1 / y;
+        }
+        // 防止NaN
+        return x != x && y != y;
+    }
+    let a = {
+        name: 'hhh'
+    }
+    b = a
+    c = {
+        name: 'hhh'
+    }
+    console.log(Object.is(NaN, NaN)) //true
+    console.log(Object.my_is(+0, -0)) //false
+    console.log(Object.is(a, b)); //true
+    console.log(Object.my_is(a, c)); //false
+    console.log(a == c) //false
+    console.log(Object.entries(a).toString() == Object.entries(b).toString());
+</script>
+
+</html>

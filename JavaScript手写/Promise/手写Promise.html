@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p>手写promise</p>
+</body>
+<script>
+    class MyPromise {
+        constructor(exeuter) {
+            this.initValue();
+            this.initBuild();
+            try {
+                exeuter(this.resolve, this.reject)
+            } catch (e) {
+                this.reject(e)
+            }
+        }
+        initBuild() {
+            this.resolve = this.resolve.bind(this);
+            this.reject = this.reject.bind(this)
+        }
+        initValue() {
+            this.PromiseResult = null;
+            this.PromiseState = 'pending';
+            this.onFulfilledCallbacks = [];
+            this.onRejectedCallbacks = [];
+        }
+        resolve(value) {
+            if (this.PromiseState == 'pending') {
+                this.PromiseState = 'fulfilled';
+                this.PromiseResult = value;
+                while (this.onFulfilledCallbacks.length) {
+                    this.onFulfilledCallbacks.shift()(this.PromiseResult)
+                }
+            }
+        }
+        reject(reason) {
+            if (this.PromiseState == 'pending') {
+                this.PromiseState = 'rejected';
+                this.PromiseResult = reason;
+                while (this.onRejectedCallbacks.length) {
+                    this.onRejectedCallbacks.shift()(this.PromiseResult);
+                }
+            }
+        }
+        then(onFulfilled, onRejected) {
+            onFulfilled = typeof onFulfilled == "function" ? onFulfilled : val => val;
+            onRejected = typeof onRejected == "function" ? onRejected : val => val;
+            let thenPromise = new MyPromise((resolve, reject) => {
+                const resolvePromise = cb => {
+                    try {
+                        const x = cb(this.PromiseResult)
+                    } catch (err) {
+                        reject(err);
+                    }
+                }
+            })
+            if (this.PromiseState == 'fulfilled') {
+                onFulfilled(this.PromiseResult)
+            } else if (this.PromiseState == 'rejected') {
+                onRejected(this.PromiseResult)
+            } else if (this.PromiseState == 'pending') {
+                this.onFulfilledCallbacks.push(onFulfilled.bind(this));
+                this.onRejectedCallbacks.push(onRejected.bind(this));
+            }
+        }
+    }
+    // const test = new MyPromise((res, req) => {
+    //     setTimeout(() => {
+    //         res("succee")
+    //     }, 1000)
+    // }).then(res => {
+    //     console.log(res);
+    // }, req => {
+    //     console.log('req')
+    // })
+    const test1 = new Promise((resolve, reject) => {
+        resolve(100);
+    }).then(res => {
+        return res * 2
+    }, req => {
+        console.log("error");
+    }).then(res => {
+        console.log(res * 2);
+    }, req => {
+        console.log(req)
+    })
+    const test2 = new Promise((resolve, reject) => {
+            resolve(100);
+        }).then(res =>
+            new Promise((resolve, reject) =>
+                reject(res * 3))
+            .then(res =>
+                console.log(res), req => {
+                    console.log('errrr')
+                }), req => console.log(req))
+        // console.log(test)
+</script>
+
+</html>

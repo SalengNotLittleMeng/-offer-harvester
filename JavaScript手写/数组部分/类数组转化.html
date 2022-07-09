@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>类数组转化</title>
+</head>
+
+<body>
+    <div>1</div>
+    <div>2</div>
+    <div>3</div>
+    <div>4</div>
+    <div>5</div>
+</body>
+<script>
+    // 返回与指定的选择器组匹配的文档中的元素列表 
+    console.log(document.querySelectorAll('div'))
+    let element = document.querySelectorAll('div');
+    // console.log([...element])
+    // console.log(Array.from(element))
+    // console.log(Array.prototype.slice.call(element))
+    // console.log([].concat.apply([], element))
+    //手写slice
+    Array.prototype.mySlice = function(beg, end) {
+        let begin = beg || 0;
+        let last = end || this.length;
+        begin = (begin >= 0) ? begin : Math.max(0, begin + last);
+        last = (typeof last == 'number') ? Math.min(last, this.length) : this.length;
+        let res = new Array();
+        for (let i = begin; i < last; i++) {
+            res.push(this[i]);
+        }
+        return res;
+    }
+    console.log(Array.prototype.mySlice.call(element))
+        // console.log(Array.from(element).mySlice(1, 3))
+</script>
+
+</html>
