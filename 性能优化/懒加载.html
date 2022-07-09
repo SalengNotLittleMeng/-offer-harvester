@@ -26,7 +26,7 @@
            const img=document.getElementById("img")
             let seeHeight=document.documentElement.clientHeight; //视口可见区
             let scrollTop=document.documentElement.scrollTop || document.body.scrollTop; //滚动条滚动的距离
-             if(img.offsetTop<seeHeight+scrollTop){
+             if(img.src==""&&img.offsetTop<seeHeight+scrollTop){
                     const imgUrl=img.getAttribute("data-src")
                     img.setAttribute("src",imgUrl)
             }
