@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>深浅拷贝</h2>
+</body>
+    <script>
+    // 基本数据类型
+        let a=5;
+        let b=a 
+        a=3
+        console.log(a,b) //3,5
+// 浅拷贝
+        // let arr=[1,2,3];
+        // let newArr=arr  
+        // newArr.push(4)
+        // console.log(newArr,arr)
+// 解构赋值针对一维数组可以看作是深拷贝，但对于多维是浅拷贝
+        let arr=[1,2,3];
+        let newArr=[...arr] 
+        newArr.push(4)
+        console.log(newArr,arr)
+// 
+    let arr2=[[1,2,3],[4,5,6]]
+    let newArr2=[...arr2]
+    newArr2[0].push(888)
+    console.log(arr2,newArr2)
+// 深拷贝用法：
+let name=Symbol("小明")
+let list=[{id:1,name:"小明",fn:function(){
+    console.log("hello")
+}},
+{id:2,name},
+{id:3,name:"小华"},
+]
+    let newList=JSON.parse(JSON.stringify(list))
+// 使用JSON进行深拷贝，会丢失部分类型的值，比如函数，Symbol,日期对象
+console.log(list,newList)
+function deepClone(source){
+    let target=source.constructor==Object?{}:[];
+   for(let item in source){
+       if(source.hasOwnProperty(item)){
+        if(source[item]&&source[item] instanceof Object){
+           target[item]=deepClone(source[item])
+        }else
+        target[item]=source[item]
+        }
+    }
+    return target
+}
+let list2=deepClone(list)
+list.push({id:4})
+console.log("深拷贝",list2)
+    </script>
+</html>

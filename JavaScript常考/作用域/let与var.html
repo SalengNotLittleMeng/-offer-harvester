@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>let与var</h2>
+</body>
+<script>
+    console.log(name) 
+// 打印结果：hello,声明提升=>先上车后买票
+    var name="hello"
+
+function fn(){
+// 没有局部作用域
+    for(var i=0;i<5;i++){
+        // console.log(i)
+    }
+// 打印结果：5，
+     console.log(i) 
+}
+fn()
+
+var name2="world"
+var name2="world2"
+// 打印结果：world2
+// 形成了声明覆盖
+console.log(name2)
+</script>
+</html>
