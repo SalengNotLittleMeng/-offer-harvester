@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>闭包</h1>
+    <h2>为什么要有闭包？</h2>
+<!-- 避免变量被污染，保证变量私有化，保存变量让其常驻内存 -->
+    <h2>闭包的应用场景</h2>
+    <li>防抖节流</li>
+    <li>保证数据的私有性</li>
+</body>
+    <script>
+    let a ="小明"
+        function fn1(){
+        let b=1;
+        console.log(a)
+    }
+    fn1()
+    // 当执行一个函数时，会创建一个AO（Active Object）对象来保存函数局部变量，当函数结束执行后，AO释放
+    // 全局变量不会被回收，会常驻内存
+    function fn(){
+        let a=1
+        return a
+    }
+    let b=fn()
+    console.log(a,b)
+    </script>
+</html>

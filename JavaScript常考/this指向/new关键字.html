@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>new 关键字</h1>
+</body>
+    <script>
+    function Book(book){
+        this.book=book
+    }
+    let book=new Book("hello")
+    console.log(book)
+        function myNew(fn,...arg){
+            let obj1=null
+            let obj=Object.create(null)        // 创建无原型链对象
+            obj._proto_ =fn.prototype
+            let result=fn.call(obj,...arg)
+            if(typeof result =="object"){
+                obj1=result
+            }else
+                obj1=obj
+            return obj1
+        }
+    let book2=myNew(Book,"hello")
+    console.log(book2)
+    </script>
+</html>
