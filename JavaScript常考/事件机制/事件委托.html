@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>事件委托</h1>
+    <h3>事件委托就行利用事件冒泡，指定一个事件处理程序，就可以管理某一类型的所有事件</h3>
+    <ul id="ul">
+
+    </ul>
+    <button id="btn">点击添加li</button>
+</body>
+<script>
+let ul=document.getElementById("ul")
+ul.onclick=function(event){
+    event=event || window.event
+    let target=event.target
+    if(target.nodeName=='LI'){
+        alert(target.innerHTML)
+    }
+}
+let btn= document.getElementById("btn")
+btn.onclick=function(){
+    let li=document.createElement("li")
+    li.textContent=ul.children.length;
+    ul.appendChild(li)
+}
+</script>
+</html>

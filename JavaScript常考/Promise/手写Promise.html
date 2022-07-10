@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Promise</h1>
+</body>
+    <script>
+        function myPromise(excutror){
+         let self=this
+        // 状态
+        self.status="pending";
+        self.value=null //成功的值
+        self.reason=null //失败的回调
+        self.onFulfilledCallbacks=[]
+        self.onRejectedCallbacks=[]
+        function resolve(value){
+            if(self.status=="pending"){
+                self.value=value
+                self.status="fulfilled"
+                self.onFulfilledCallbacks.forEach(item=>{
+                    item(value)
+                })        
+            }
+            }
+        function reject(reason){
+        if(self.status=="pending"){
+                self.reason=reason
+                self.status="rejected"        
+            }
+            self.onRejectedCallbacks.forEach(item=>{
+                    item(reason)
+            })
+        }
+        try{
+            excutror(resolve,reject)
+        }catch(err){
+            reject(err)
+        }
+        }
+        myPromise.prototype.then=function(onFulfilled,onRejected){
+            console.log(this)
+            onFulfilled= typeof onFulfilled==="function"?onFulfilled:function(data){resolve(data)}
+             onRejected= typeof onRejected=="function"?onRejected:function(err){throw err}
+            let self=this
+                    if(self.status=="fulfilled"){
+                    return new myPromise((resolve,reject)=>{
+                    try{
+                       let x=onFulfilled(self.value)
+                    x instanceof myPromise?x.then(resolve,reject):resolve(x)
+                    }catch(err){
+                        reject(err)
+                    }
+                })
+            }
+            if(self.status=='pending'){
+                return new myPromise((resolve,reject)=>{
+                    self.onFulfilledCallbacks.push(()=>{
+                    let x=onFulfilled(self.value)
+                    x instanceof myPromise?x.then(resolve,reject):resolve(x)
+                })  
+                self.onRejectedCallbacks.push(()=>{
+                    let x=onRejected(self.value)
+                    x instanceof myPromise?x.then(resolve,reject):resolve(x)
+            })
+                })
+            }
+        }
+        myPromise.prototype.catch=function(fn){
+                return this.then(null,fn)
+        }
+        let demo=new myPromise((resolve,reject)=>{
+            setTimeout(()=>{
+                resolve(11)
+            },500)
+        })
+        demo.then(data=>{console.log(data)})
+    </script>
+</html>
