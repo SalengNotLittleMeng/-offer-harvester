@@ -64,7 +64,7 @@
                     x instanceof myPromise?x.then(resolve,reject):resolve(x)
                 })  
                 self.onRejectedCallbacks.push(()=>{
-                    let x=onRejected(self.value)
+                    let x=onRejected(self.reason)
                     x instanceof myPromise?x.then(resolve,reject):resolve(x)
             })
                 })
