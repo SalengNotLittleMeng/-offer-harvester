@@ -12,96 +12,80 @@
     <p>手写promise</p>
 </body>
 <script>
-    class MyPromise {
-        constructor(exeuter) {
-            this.initValue();
-            this.initBuild();
-            try {
-                exeuter(this.resolve, this.reject)
-            } catch (e) {
-                this.reject(e)
-            }
-        }
-        initBuild() {
-            this.resolve = this.resolve.bind(this);
-            this.reject = this.reject.bind(this)
-        }
-        initValue() {
-            this.PromiseResult = null;
-            this.PromiseState = 'pending';
-            this.onFulfilledCallbacks = [];
-            this.onRejectedCallbacks = [];
-        }
-        resolve(value) {
-            if (this.PromiseState == 'pending') {
-                this.PromiseState = 'fulfilled';
-                this.PromiseResult = value;
-                while (this.onFulfilledCallbacks.length) {
-                    this.onFulfilledCallbacks.shift()(this.PromiseResult)
-                }
-            }
-        }
-        reject(reason) {
-            if (this.PromiseState == 'pending') {
-                this.PromiseState = 'rejected';
-                this.PromiseResult = reason;
-                while (this.onRejectedCallbacks.length) {
-                    this.onRejectedCallbacks.shift()(this.PromiseResult);
-                }
-            }
-        }
-        then(onFulfilled, onRejected) {
-            onFulfilled = typeof onFulfilled == "function" ? onFulfilled : val => val;
-            onRejected = typeof onRejected == "function" ? onRejected : val => val;
-            let thenPromise = new MyPromise((resolve, reject) => {
-                const resolvePromise = cb => {
-                    try {
-                        const x = cb(this.PromiseResult)
-                    } catch (err) {
-                        reject(err);
-                    }
-                }
+    function MyPromise(excutor){
+        let self=this;
+        self.value=null     
+        self.reason=null
+        self.onFulfilledCallback=[]
+        self.onRejectCallback=[]
+        self.status="pending"
+        function reslove(value){
+        if(self.status=="pending"){
+            self.status="onFulfilled"
+            self.value=value
+            self.onFulfilledCallback.forEach(item=>{
+                item(value)
             })
-            if (this.PromiseState == 'fulfilled') {
-                onFulfilled(this.PromiseResult)
-            } else if (this.PromiseState == 'rejected') {
-                onRejected(this.PromiseResult)
-            } else if (this.PromiseState == 'pending') {
-                this.onFulfilledCallbacks.push(onFulfilled.bind(this));
-                this.onRejectedCallbacks.push(onRejected.bind(this));
-            }
+        }
+        }
+        function reject(reason){
+            if(self.status=="pending"){
+            self.status="rejected"
+            self.reason=reason
+            self.onRejectCallback.forEach(item=>{
+                item(value)
+            })
+        }
+        }
+        try{
+            excutor(reslove,reject)
+        }catch(err){
+            reject(err)
         }
     }
-    // const test = new MyPromise((res, req) => {
-    //     setTimeout(() => {
-    //         res("succee")
-    //     }, 1000)
-    // }).then(res => {
-    //     console.log(res);
-    // }, req => {
-    //     console.log('req')
+    MyPromise.prototype.then=function(onFulFilled,onRejected){
+        let self=this
+        return new MyPromise((reslove,reject)=>{
+         if(self.status=="onFulfilled"){
+            let temp=onFulFilled(self.value)
+            temp instanceof MyPromise?temp.then(reslove,reject):reslove(temp)
+        }
+        if(self.status=="rejected"){
+            let temp=onRejected(self.reason)
+            temp instanceof MyPromise?temp.then(reslove,reject):reslove(temp)
+        }
+        if(self.status=="pending"){
+            self.onFulfilledCallback.push(()=>{
+                    let temp=onFulFilled(self.value)
+                    temp instanceof MyPromise?temp.then(reslove,reject):reslove(temp)
+            })
+            self.onRejectCallback.push(()=>{
+                    let temp=onRejected(self.reason)
+                    temp instanceof MyPromise?temp.then(reslove,reject):reslove(temp)
+            })
+        }
+        })
+    }
+    // let demo=new MyPromise((reslove,reject)=>{
+    //     reslove(2)
+    //     console.log(1)
     // })
-    const test1 = new Promise((resolve, reject) => {
-        resolve(100);
-    }).then(res => {
-        return res * 2
-    }, req => {
-        console.log("error");
-    }).then(res => {
-        console.log(res * 2);
-    }, req => {
-        console.log(req)
+// demo.then(data=>{console.log(data)
+//         return 3
+// }).then(data=>{console.log(data)})
+
+let demo2=new Promise((reslove,reject)=>{
+        reslove(2)
+        console.log(1)
     })
-    const test2 = new Promise((resolve, reject) => {
-            resolve(100);
-        }).then(res =>
-            new Promise((resolve, reject) =>
-                reject(res * 3))
-            .then(res =>
-                console.log(res), req => {
-                    console.log('errrr')
-                }), req => console.log(req))
-        // console.log(test)
+demo2.then(data=>{
+        console.log(data)
+       demo3=new Promise((reslove,reject)=>{
+        reslove(data)
+        console.log(5)
+    })
+    return demo3
+}).then(data=>{console.log(data)})
 </script>
 
 </html>
