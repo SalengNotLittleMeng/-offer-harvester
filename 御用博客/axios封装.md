@@ -45,6 +45,13 @@ axios，一个用于网络请求的库，这应该是绝大多数前端项目都
 
 需求明确了，我们直接来吧！
 
+完整源码的项目地址：
+
+* gitee:[Handy-Vue-cli: 对Vue脚手架的二次封装 (gitee.com)](https://gitee.com/yan-taomeng/vue-cli)
+* github:[Handy-Vue-Cli: 一款更便利的，开箱即用的Vue3脚手架 (github.com)](https://github.com/SalengNotLittleMeng/Handy-Vue-Cli)
+
+这个项目是我对于Vue脚手架的一个封装，目的是整出一个开箱即用的Vue3脚手架。本文中相关的源代码在src/api文件夹下
+
 ## 抽离api
 首先我们要做的，是将所有api从业务代码中抽离出来统一管理，这样无论我们之后是要修改接口还是调试都很清晰简单。因为很多时候一个接口要用在多个地方，而如果这个接口需要修改，我们只需要修改一处即可，避免了一个接口有改动，必须翻遍项目把所有用到这个接口的地方都该一遍的问题。
 
@@ -344,6 +351,8 @@ graph TD
 
 这样就可以做到兼顾变量的可读性和独立性了
 
+但还是要说一下，在项目中直接使用localStorage依然是一个不够合适的方案，localStorage的封装有时间也会给大家讲一下（开始挖坑）
+
 ### 统一添加auth
 
 不知道大家的项目里有没有添加接触过这个东西。
@@ -355,14 +364,301 @@ graph TD
 那么，如果后端设置了auth,前端每个请求访问都必须带上auth,这种统一处理的操作自然是要放在拦截器当中处理了,操作很简单，直接在config里设置即可
 
 ```js
-    const auth: {
+instance.interceptors.request.use((config)=>{
+    const auth={
     username: "admin",
     password: "password",
   }
    config.auth = auth
+   ......
+    return config
+})
 ```
 你可能会说，不对啊，刚才不是说要进行base64加密吗？
 
 没错，但axios在内部会帮你完成加密这个过程，因此我们只要去设置auth这个属性就可以了，是不是很方便？
+
+### 统一处理错误
+
+如果我们的请求抛出了错误，我们希望在无法返回数据时给用户一些反馈。而绝大多数时候，处理错误无非是用弹窗对用户进行提示，而这个统一的操作我们完全可以放在axios内部进行统一操作。
+
+在axios中，响应拦截器拥有两个参数：第一个参数表示如果请求成功时处理的函数，第二个参数表示请求失败时处理的函数。响应拦截器成功时的参数与请求拦截器一样，都必须将自己默认的参数return出去保证可以进行链式调用。但对于失败时的函数，我们需要手动调用Promise的reject方法来结束可能出现的链式调用
+
+另外，由于我们在响应报文中一般会直接去data找后端返回给我们的数据，因此在响应成功的部分，我们可以直接返回response.data，这样就不用每次找数据都去找data了
+
+拦截器的大致结构如下：
+
+```js
+    instance.interceptors.response.use(
+  (response) => {
+    return response.data;
+  },
+  (error) => {
+      ...
+      return Promise.reject(error);
+  }
+);
+```
+
+那么既然是统一错误处理，那么我们就应该主要对请求失败的函数参数进行封装，这里的请求失败又分为两种情况：
+
+* 请求到达了后端，但产生了某些错误
+* 请求由于某些原因（比如断网或者请求被拦截），未到达后端
+
+这两种情况的区别是：第一中情况会返回响应报文，而第二种情况会直接抛错。因此，我们可以通过是否返回请求报文而区分这两种情况，那么，对上面请求错误的部分我们环境可以做出细化：
+
+```js
+  (error) => {
+    let { config, response } = error;
+    if (response) {
+    //请求不成功但返回结果
+  } else {
+    //服务器完全没有返回结果（网络问题或服务器崩溃）
+  }
+      return Promise.reject(error);
+  }
+```
+
+那么，对于这两种方法我们应该分别怎么处理呢？
+
+![](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/365cbc5db7df4603842cc695d08c6984~tplv-k3u1fbpfcp-watermark.image?)
+#### 返回请求报文的错误
+对于返回了响应报文的错误，我们可以针对不同的响应状态码来为用户返回不同的提示信息（看不懂状态码的自行反思！），这里我们引入element-plus的提示组件,当请求错误
+
+```js
+import { ElMessage } from "element-plus";
+...
+(error) => {
+    let { config, response } = error;
+  if (response) {
+    //请求不成功但返回结果
+    switch (response.status) {
+           case 401:
+        ElMessage.error("请先登录哦~");
+        break;
+      case 403:
+        ElMessage.error("登录信息已过期~");
+        break;
+      case 404:
+        ElMessage.error("没有找到信息");
+        break;
+        case 500:
+        ElMessage.error("服务器好像有点忙碌哦");
+        break;
+        default:
+         ElMessage.error("好像有点问题哦");
+    }
+    }
+```
+
+有问题吗？好像没有。
+
+但是如果我们希望对一部分接口的错误信息进行更详细的描述，这种统一的处理反而会增加麻烦，因为我们的错误处理是设置在拦截器上的，就以为着如果我们想要进行个性化处理就必须在拦截器上对一部分接口进行放行，或者重新创建实例进行操作，不论哪种都会增加代码的无效的复杂度。这就是上面说的**不合适的封装会程序变的臃肿**
+
+因此，我们需要预留一个配置让用户能自己配置反馈信息。
+
+这里要补充一个知识，在axios中添加一些axiso不支持的配置参数，这些参数也会保留并随着请求axios进入请求拦截器，请求过程，并在报文的config参数中返回，换句话说，如果你在axios中传了一个参数，那么**如果服务端有响应，那么这个参数在axios整个声明周期中都可以被获取到**
+
+这是因为，axios对自己默认配置和用户传入的配置，会做一个类似于Object.assign ()方法的操作，将两个配置合并成一个config。因此，你传入的配置中如果存在默认配置中不存在的参数，自然会进行保留。
+
+当然，这个合并的过程远比合并两个对象要复杂，这里就不细说了
+
+那么，我们完全可以在我们封装axios传入配置的阶段传入一个配置'errorText',这个配置可以在响应拦截器中用 error.config.errorText来获取到
+
+而我们在请求时也可以通过这个请求函数的参数对这个选项进行传参：
+
+```js
+ getMsg(params) {
+  return myAxios({
+    url: "http://localhost:8888/findByName",
+    method: "get",
+    params:params.data,
+    errorText:`这是自定义的错误提示文字，并且接受传参${params.errorText}`
+  });
+ }
+```
+这样一来，在处理错误请求时，我们就可以先尝试使用这个配置，如果没有填写这个配置的话，就用统一提示。
+
+现在我们把代码修改一下：
+
+```js
+ if (response) {
+    //请求不成功但返回结果
+    let {errorText}=error?.config
+    let errorTextDefault=''
+    switch (response.status) {
+      case 401:
+        errorTextDefault="请先登录哦~";
+        break;
+      case 403:
+        errorTextDefault="登录信息已过期~";
+        break;
+      case 404:
+        errorTextDefault="没有找到信息";
+        break;
+        case 500:
+        errorTextDefault="服务器好像有点忙碌哦";
+        break;
+        default:
+         errorTextDefault="好像有点问题哦";
+    }
+    errorText=errorText?errorText:errorTextDefault
+    ElMessage.error(errorText)
+  } 
+```
+这样我们就允许用户对错误提示信息进行自定义了，增加了封装的灵活性
+
+#### 无请求报文的错误
+
+如果请求直接抛出错误，连响应报文都没有了，那么无非是用户断网/请求被拦截/服务器崩溃或代码下线维护了，那么这个时候，我们就要给用户一些提示，当然，我们不可能直接告诉用户我们的服务器崩了，运维的事情怎么能说崩呢？那分明是在维护！
+
+因此，这部分的代码大概是这样的，当请求错误且无报文，先检测是否断网，如果断网了就告知用户，否则一律提示服务器在升级中,让用户对我们的产品充满期待！
+
+```js
+else {
+    //服务器完全没有返回结果（网络问题或服务器崩溃）
+    if (!window.navigator.onLine) {
+      //断网处理，跳转404页面
+      ElMessage.error("网络好像有一点问题哦~");
+    }else{
+       ElMessage.error("服务器升级中，请稍后再试");
+    }
+  }
+```
+
+那么，统一配置这部分就算是结束了
+
+## 简化请求参数
+
+我们知道，axios对于get请求来说，参数名是params，对于post来说则是data.同时，请求还包括了不同数据格式，比如json,formdata,urlencoded.....对于这些不同的数据格式，传入参数的方式也是不相同的，而且也要设置不同的请求头。那么，我们能不能将这些进行一个统一，不管是哪种类型，都可以统一传入一个对象，同时，根据我们请求的类型自动帮我们添加请求头。
+
+这个想法实现起来其实很简单，别忘了，我们之前都是将参数传入myAxios这个我们自定义的函数中的，那么我们就可以在myAxios中根据这些参数做一个处理
+
+首先，我们要保证传入的参数是一个对象，因此我们要在最外层去做一个判断
+
+```js
+function myAxios(config) {
+    if (Object.prototype.toString.call(config) === "[object Object]") {
+    ......
+   return instance(config)
+    }
+    return
+}
+```
+
+这里建议用Object.prototype.toString的方法，因为typeof 会将null识别为Object，instanceof则会将Array识别为Object
+
+### 处理不同格式的参数
+首先，我们要解决的第一个问题是，怎样统一不同数据格式的参数？
+
+我们知道，常用的三种数据格式无非是json,formdata和urlencoded，那么他们作为请求数据发送的话，各自有什么要求呢？
+
+* json,最常用的方式，需要将JS对象转化为标准的JSON对象进行传输，这一步axios内部已经帮我们完成了，也就是说，如果是JSON格式的话，我们无需自己做处理
+* FormData,一般用于传输文件类型，要求我们创建一个FormData对象，然后通过这个对象的append方法向这个对象中添加键对值，最后把这个对象作为参数发送给后端,我们可以给将传入的对象通过遍历的方式来在创建这个FormData对象并添加键对值
+* urlencoded，需要在传输前进行序列化处理，将对象格式化为查询参数。这个过程我们可以直接用qs这个库来完成
+
+那么，有了上面的分析，我们只需要给我们的参数config中添加一个参数type来确定是要传输哪种参数就可以了，然后根据参数的类型来决定处理方式即可
+
+```js
+import Qs from "qs";
+...
+function myAxios(config){
+...
+switch (config.type) {
+      case "json":
+       //json类型axios会自动帮我们添加请求头并进行转化，无需处理
+        break;
+      case "formData":
+        config.headers = {
+          "Content-Type": "multipart/form-data",
+        };
+        //对于formData类型，创建一个Formdata对象并通过遍历的方式将传入的参数对象添加进去
+        let params = data;
+        let newParams = null;
+        if (params) {
+          newParams = new FormData();
+          for (let i in params) {
+            newParams.append(i, params[i]);
+          }
+        }
+        //最后将这个Formdata对象作为请求参数
+        config.data = newParams;
+        break;
+      case "urlencoded":
+        config.headers = {
+          "Content-Type": "application/x-www-form-urlencoded",
+        };
+        //对于urlencoded类型，使用QS这个库进行序列化即可
+        config.transformRequest = [
+          (data) => {
+            return Qs.stringify(data);
+          },
+        ];
+        break;
+      default:
+        break;
+    }
+    }
+```
+
+经过上面的处理，不论我们需要传输哪种数据格式，都只需要在config里传入一个对象类型的data参数，无需再做其他处理，也不需要去写一大串的添加请求头配置了。
+
+
+![@XCCE{CU[@`H(0)Y6BI]089.jpg](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d9c5688aa35240f8860a2c473fa440dc~tplv-k3u1fbpfcp-watermark.image?)
+### 开启默认配置
+但还没完，由于我们在一个项目中大部分碰到的还是json类型的数据，因此我们应该设置一下默认配置，不然总不能每次都写一个type类型的参数吧？另外，请求方式一般post用的要多一些，我们也可以设置post为默认的请求方式，这样在请求接口函数的部分就可以少写很多配置了。而在这里我们也可以统一一下post和get的请求参数：不论用get还是post，参数字段统一使用data
+
+使用默认配置?很简单啊，加入config里没有这个配置就把这个配置设置为默认的值呗？
+
+```js
+     config.method = method ? method : "post";
+    config.type = type ? type : "json";
+```
+可以是可以，但太麻烦了！
+
+如果后面有更多的默认值，难道要一条一条加代码吗？
+
+我们可以直接写一个默认配置对象，然后跟原本的配置对象进行合并，这样之后还有什么需要添加的默认配置，只需要修改默认配置的对象即可
+
+```
+function myAxios(config) {
+    if (Object.prototype.toString.call(config) === "[object Object]") {
+    const defaultConfig={
+        method:'post',
+        type:'json'
+    }
+    config=Object.assign(defaultConfig,config)
+    .....
+     if (config.method == "get") {
+      config.params = config.data;
+    }
+    return instance(config);
+    }
+    }
+```
+
+这样，我们对于请求参数的部分也算是封装完成了！
+
+## 关于后续更新
+
+本来打算一万字以内写完的，但好像把这些基础的部分写完，就已经八千多字了（看来我是果然够细）。因此决定临时改成上下两篇。
+
+![jpg](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/57443d9709c945f5b3560d4613cb9f8a~tplv-k3u1fbpfcp-watermark.image?)
+
+下篇将会包括以下内容：
+
+* 自动取消重复请求
+* 请求过程中添加加载动画
+* 添加重连机制
+* 将可能修改的配置进行抽离
+* 配置本地代理，集成Mock
+* 对代码进行重构
+
+下篇同样会去深挖细节，如果感兴趣的话不妨点个关注，再来不迷路哦！
+
+我是小小蒙，非正式前端，正在为成为一名正式的前端工程师而奋斗
+
+
+
 
 
