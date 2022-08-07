@@ -2,6 +2,8 @@
 ---
 theme: cyanosis
 ---
+我正在参与掘金创作者训练营第5期，[点击了解活动详情](https://juejin.cn/post/7123119385803390983 "https://juejin.cn/post/7123119385803390983")
+
 大家好，我是小小蒙，准大三，非正式前端
 
 之前写了一篇关于axios封装的文章[【细节至上，万字教程】封装axios？看这篇就够了！（上）](https://juejin.cn/post/7125454447979233311)，里面的一些内容提到了axios源码相关的知识。在这篇文章中，我发现axios源码的内容跟封装放在一起讲其实并不容易讲明白，因此，我决定开一篇专栏将axios的源码给大家讲明白
@@ -29,6 +31,8 @@ theme: cyanosis
 看一个项目的源码，首先要从他的入口文件处开始看起，那么，首先我们从axios.js这个文件开始看起，来对axios的源码进行解析
 
 ## axios.js源码分析
+
+### 创建axios的函数
 我们进入到axios.js的代码中，首先它定义了一个创建实例的函数：
 
 ```javascript
@@ -60,7 +64,23 @@ function createInstance(defaultConfig) {
 
 既然如此，我们完全可以创建一个axios函数，并在这个函数上添加属性或方法啊啊，为什么要先创建一个构造函数并在构造函数上添加方法，再将这些方法都搬运到axios这个函数身上呢？
 
-使用Axios构造函数，是为了能够使用面向对象的方式进行编程，让整个代码更加条理。但带来的问题就是，如果最后暴露的是一个构造函数Axios，那么开发者就可以通过修改原型链对Axios上的方法进行修改，造成各种潜在的风险，同时，axios在开发中使用的频率比较高，多次创建实例化对于开发者来说也不友好。因此，axios最后只暴露出了一个函数，而这个函数可以使用Axios上的所有方法
+首先，使用构造函数能然我们比较轻松地对一个对象进行属性和方法的扩展，尤其是像axios这样拥有很多方法的对象，用构造函数可以比较轻松地为一个对象进行扩展
+
+其次，axios在有一个功能是可以创建实例，也就是要实现“继承”这一功能，使用构造函数显然可以更好地实现继承
+
+但直接暴露出Axios这个对象又会导致我们每次使用axios时都需要手动去new出一个实例，这样又会导致以下两个问题：
+
+* 操作不方便，如果我们在脚手架中使用的是构造函数Axios,那么我们难道在每个文件中都要new一个Axios对象吗
+* 属性无法公用，由于new出来的对象都是独立的，因此如果我们想统一设置axios的一些属性就显得很麻烦
+
+当然，上面两个问题都可以通过封装来解决，但是，问题留给用户去解决显然不是一个优秀的库应该干的事情
+
+因此，axios选择通过上面提到的方式来实现：使用构造函数来维护各种方法，最后将构造函数上的各种方法添加到函数axios上，这样就做到了兼顾构造函数和普通函数的优点
+
+因此，axios最后只暴露出了一个函数，而这个函数可以使用Axios上的所有方法
+ 
+ ### axios.js中的工具函数
+
 补充一些工具函数的源码：bind.js
 
 ```javascript
@@ -90,7 +110,8 @@ function extend(a, b, thisArg) {
 ```
 extend的作用是将对象b的所有属性值和方法添加到对象a上，如果有方法是函数，则可以通过第三个参数去指定函数this的指向
 
-之后，创建了一个实例axios，这也就是我们平时所用到的axios
+### create方法
+我们平时用的aixos是直接调用了上面写道的createInstance创建了的：
 
 ```javascript
 var axios = createInstance(defaults);
@@ -99,7 +120,7 @@ var axios = createInstance(defaults);
 // 暴露 Axios 类， 允许类继承
 axios.Axios = Axios;
 ```
-注意一点，在这个阶段创建的axios，使用的还是default.js中的默认配置，那么，如果我们想创建多个不同的实例对象对不同情况进行不同处理，该怎么办呢
+在这个阶段创建的axios，使用的还是default.js中的默认配置，那么，如果我们想创建多个不同的实例对象对不同情况进行不同处理，该怎么办呢？axios的做法是：给最后暴露出的axios添加一个create方法：
 
 ```javascript
 // 创建实例的工厂函数
@@ -107,8 +128,18 @@ axios.create = function create(instanceConfig) {
     return createInstance(mergeConfig(axios.defaults, instanceConfig));
 };
 ```
-这个部分创建了一个工厂函数，用于创建新的Axios实例，其中mergeConfig用于合并两个配置，有重复的配置的话以后面的参数为准，将新的配置作为参数，调用创建axios实例的方法。这就让我们能够利用参数对默认配置进行局部修改，创建多个不同的axios对象
-之后，给axios添加了取消请求的方法，由于取消请求是针对于具体某个请求的，因此直接挂在了axios的私有方法下
+create是一个工厂函数，用于创建新的Axios实例。
+
+其中mergeConfig这个方法用于合并两个配置，有重复的配置的话以后面的参数为准，将新的配置作为参数，调用创建axios实例的方法。这就让我们能够利用参数对默认配置进行局部修改。
+
+另外，每次调用create方法都会返回一个新的对象，这个对象会拥有Axios上全部的方法，这就达到了继承的目的，我们可以调用create方法来创建axios的多个实例
+
+所以严格地说，axios的create方法并不是创建实例，而是返回了一个拥有Axios全部方法的对象。但create这个方法是在创建实例后手动添加在axios上的，因此实例并没有create这个方法
+
+![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/81ac18ca04154b41990f27250c525d56~tplv-k3u1fbpfcp-watermark.image?)
+
+### 添加其他方法
+之后，给axios添加了取消请求的方法，由于取消请求是针对于具体某个请求的，因此直接挂在了axios的私有方法下：
 
 ```javascript
 axios.Cancel = require('./cancel/Cancel');
@@ -133,9 +164,10 @@ axios.spread = require('./helpers/spread');
 axios.isAxiosError = require('./helpers/isAxiosError');
 // 暴露出axios
 module.exports = axios;
-
 ```
-这里注意处理高并发的axios.all和axios.spread,官方调用的实例如下：
+这里大家可以注意一下axios内置的axios.all和axios.spread,这两个方法本质是调用promsie提供的all来处理多个请求，在当我们需要同时处理多个请求时无需进行链式调用，只要一步就可以搞定了！
+
+官方调用的实例如下：
 
 ```javascript
 function getUserAccount() {
@@ -148,6 +180,12 @@ function getUserPermissions() {
 
 axios.all([getUserAccount(), getUserPermissions()])
   .then(axios.spread((acct, perms) => {
-    // 两个请求都完成后
+    // 两个请求都完成后的回调函数
   }));
+```
 
+那么，axios.js这个文件的分析就算是结束了，这个文件非常短，但里面的精彩的设计思路却很值得我们学习
+
+![W8F3@QYC2W{OQA6RC_GNEGO.gif](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d6d2162ca2c045b59414f1928de80ff8~tplv-k3u1fbpfcp-watermark.image?)
+
+我是小小蒙，正在为成为一名正式的前端工程师而努力!
