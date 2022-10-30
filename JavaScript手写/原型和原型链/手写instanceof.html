@@ -12,18 +12,9 @@
     <p>手写instanceof</p>
 </body>
 <script>
-    function myinstanceof(l, r) {
-        let lp = l._proto_;
-        let rp = r.prototype;
-        while (true) {
-            if (lp === null) {
-                return false;
-            }
-            if (lp === rp) {
-                return true;
-            }
-            lp = lp._proto_
-        }
+   function MyInstanceof(left,right){
+        let =Object.getPrototypeOf(left)
+        let 
     }
     // console.log(myinstanceof(123, Number))
     // 手写 is
