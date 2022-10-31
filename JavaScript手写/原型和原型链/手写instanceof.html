@@ -13,10 +13,17 @@
 </body>
 <script>
    function MyInstanceof(left,right){
-        let =Object.getPrototypeOf(left)
-        let 
+        let proto=Object.getPrototypeOf(left)
+        let  prototype=right.prototype
+        while(proto){
+            if(proto==prototype){
+                return true
+            }
+        proto=Object.getPrototypeOf(proto)
+        }
+        return false
     }
-    // console.log(myinstanceof(123, Number))
+    console.log(1,MyInstanceof('123', Number))
     // 手写 is
     Object.prototype.my_is = function(x, y) {
         if (x == y) {

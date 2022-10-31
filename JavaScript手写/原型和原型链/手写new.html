@@ -19,12 +19,13 @@
     // let cat = new Animal('cat')
 
     function mynew(fn, ...arg) {
-        let obj = {};
-        obj._proto_ = fn.prototype;
-        let result = fn.apply(obj, arg)
-        return result instanceof Object ? result : obj;
+      let obj={}
+        obj.__proto__=fn.prototype
+    let result = fn.call(obj,...arg)
+     return (result&&typeof result=='object' && result!==null) ? result : obj
     }
     let cat = mynew(Animal, 'cat')
+    console.log(cat.name)
     console.log(typeof cat == "object")
 </script>
 

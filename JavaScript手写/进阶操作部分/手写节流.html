@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="fnc()">节流</button>
+</body>
+    <script>
+        function fn(){
+            console.log('click')
+        }
+    function throttle(fn,delay){
+        let curtime=new Date().getTime()
+        return function (...args){
+            let nowTime=new Date().getTime()
+            if(nowTime-curtime>=delay){
+                curtime=new Date().getTime()
+                return fn.call(this,args)
+            }
+        }
+    }
+    let fnc=throttle(fn,1000)
+    </script>
+</html>
