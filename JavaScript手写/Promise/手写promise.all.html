@@ -10,27 +10,42 @@
     promise.all
 </body>
     <script>
-        Promise.myAll=function(arr){
-            return new Promise(function(reslove,reject){
-                           if(!Array.isArray(arr)){
-                    throw new TypeError('arr could be a Array')
-                }
-            let len =arr.length
-            let resultList=[]
-            let count=0
-            for(let i=0;i<len;i++){
-                Promise.resolve(arr[i]).then(res=>{
-                    count++
-                    resultList[i]=res
-                    if(count==len){
-                     reslove(resultList)
+        // Promise.myAll=function(arr){
+        //     return new Promise(function(reslove,reject){
+        //                    if(!Array.isArray(arr)){
+        //             throw new TypeError('arr could be a Array')
+        //         }
+        //     let len =arr.length
+        //     let resultList=[]
+        //     let count=0
+        //     for(let i=0;i<len;i++){
+        //         Promise.resolve(arr[i]).then(res=>{
+        //             count++
+        //             resultList[i]=res
+        //             if(count==len){
+        //              reslove(resultList)
+        //             }
+        //         }).catch(err=>{
+        //             reject(err)
+        //         })
+        //     }
+        //     })
+        // }
+    Promise.myAll=function(array){
+        let list=[]
+        return new Promise((reslove,reject)=>{
+            for(let i=0;i<array.length;i++){
+                Promise.resolve(array[i]).then(res=>{
+                    if(list.length==array.length){
+                        reslove(list)
                     }
+                    list[i]=res
                 }).catch(err=>{
                     reject(err)
                 })
             }
-            })
-        }
+        })
+    }
 let p1 = new Promise(function (resolve, reject) {
     setTimeout(function () {
         resolve(1)
