@@ -31,21 +31,24 @@
         //     }
         //     })
         // }
-    Promise.myAll=function(array){
-        let list=[]
-        return new Promise((reslove,reject)=>{
-            for(let i=0;i<array.length;i++){
-                Promise.resolve(array[i]).then(res=>{
-                    if(list.length==array.length){
-                        reslove(list)
+        Promise.myAll=function(array){
+        if(!array instanceof Array){
+            throw TypeError('need array')
+        }
+            return new Promise(function(resovle,reject){
+                let result=[]
+                for(let i=0;i<array.length;i++){
+                    Promise.resolve(array[i]).then(res=>{
+                    if(result.length==array.length){
+                        resovle(result)
                     }
-                    list[i]=res
-                }).catch(err=>{
-                    reject(err)
-                })
-            }
-        })
-    }
+                    result[i]=res
+                    }).catch(err=>{
+                        reject(err)
+                    })
+                }
+            })
+        }
 let p1 = new Promise(function (resolve, reject) {
     setTimeout(function () {
         resolve(1)

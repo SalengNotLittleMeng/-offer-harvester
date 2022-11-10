@@ -16,7 +16,12 @@
             throw new TypeError('need array')
         }
         for(let i=0;i<arr.length;i++){
-            arr[i].then(resolve,reject)
+           console.log(arr[i])
+            arr[i].then(res=>{
+                resolve(res)
+            }).catch(err=>{
+                reject(err)
+        })
         }
     })
     }
