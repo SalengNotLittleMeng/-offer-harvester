@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+    <style>
+        #out-box{
+            position: relative;
+            width: 500px;
+            height: 200px;
+            background-color: bisque;
+            overflow: hidden;
+        }
+        #content{
+            position: relative;
+            width: 2000px;
+            height: 100%;
+            background-color:rebeccapurple;
+            display: flex;
+        }
+        #content div{
+            width: 500px;
+            height: 100%;
+            background-color: brown;
+        }
+        .btn{
+            position: absolute;
+            background-color: blue;
+            border-radius: 50%;
+            color: white;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 20px;
+            transform: translate(-50%,-50%);
+            top: 50%;
+            cursor:default;
+        }
+        #left-icon{
+            left: 30px;
+        }
+        #right-icon{
+            right: 30px;
+        }
+        .itemClass{
+            width: 500px;
+            height: 100%;   
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            background-color: brown;
+        }
+    </style>
+<body>
+    <div id="out-box">
+        <div id="content">
+        </div>  
+        <div class="btn" id="left-icon" onclick="toChange(true)">-</div>
+        <div class="btn" id="right-icon" onclick="toChange(false)">+</div>
+    </div>
+</body>
+    <script>
+        class Carousel{
+            constructor(options){
+                this.timer=null
+                this.width=options.width || 500
+                this.height=options.width || 200
+                this.time=options.time
+                this.content=document.getElementById('content')
+                this.number=options.number?options.number:options.ImageList.length
+                this.ImageList=options.ImageList
+                this.left=0
+                this.initStyle()
+                this.initChildrenNode()
+                this.begin()
+            }
+            initStyle(){
+               let outer= document.getElementById('out-box')
+                outer.style.height=this.height+'px'
+                outer.style.width=this.width+'px'
+                this.content.style.width=this.number*this.width  +'px'
+            }
+            initChildrenNode(){
+                function createItemNode(){
+                    let node=document.createElement('div')
+                    node.setAttribute('class','itemClass')
+                    node.style.width=this.width+'px'
+                    return node
+                }
+                for(let i=0;i<this.number;i++){
+                    let node=createItemNode.call(this)
+                    node.style.backgroundImage=`url(${this.ImageList[i]})`;
+                       this.content.appendChild(node)
+                }
+            }
+            begin(){
+              this.timer=setInterval(()=>{
+                    this.change()
+                },this.time)
+            }
+            change(direction='right'){
+               let content=this.content
+                this.left=direction=='right'?this.left-this.width:this.left+this.width
+                content.style.left=this.left+'px'
+                if(this.left==-this.width*this.number){
+                 content.style.left='0px'
+                this.left=0
+                }
+                if(this.left==this.width){
+                 content.style.left=-this.width*(this.number-1)+'px'
+                this.left=-this.width*(this.number-1)
+                }
+            }
+            abort(){
+                clearInterval(this.timer)
+            }
+            leftChange(){
+                this.change('left')
+            }
+            rightChange(){
+                this.change('right')
+            }
+        }
+        let carousel=new Carousel({
+            width:500,
+            height:500,
+            time:1000,
+            ImageList:['https://ts1.cn.mm.bing.net/th/id/R-C.901f8ebdab22d065baefeae6c2701cc0?rik=Z3Hew18zFaF%2bLQ&riu=http%3a%2f%2fwww.pp3.cn%2fuploads%2f20120418lw%2f13.jpg&ehk=Es5ZGH90h%2foCghvlIwdKfUiqpO05gLSgOEBU2i0Mwok%3d&risl=&pid=ImgRaw&r=0',
+                        'https://pic3.zhimg.com/v2-58d652598269710fa67ec8d1c88d8f03_r.jpg?source=1940ef5c','https://tse4-mm.cn.bing.net/th/id/OIP-C.QFdwl07_aviM1ch2KpyyFgHaEo?pid=ImgDet&rs=1','https://tse4-mm.cn.bing.net/th/id/OIP-C.P3NSGTdAYdyqy5zJpb5QXQHaEo?pid=ImgDet&rs=1'
+                ],
+            number:4
+        })
+        function toChange(isToLeft){
+           isToLeft? carousel.leftChange():carousel.rightChange()
+        }
+    </script>
+</html>

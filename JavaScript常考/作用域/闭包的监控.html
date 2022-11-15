@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    闭包的监控可以通过谷歌浏览器的开发者工具进行查看和排查
+    <br>
+    <button id="btn">点击</button>
+</body>
+    <script>
+// https://juejin.cn/post/6844904048961781774
+    let startBtn=document.getElementById("btn")
+var arr = [];
+startBtn.addEventListener("click", function() {
+	var a = new Array(100000).fill(1);
+	var b = new Array(20000).fill(1);
+    arr.push(b);
+});
+
+    </script>
+</html>

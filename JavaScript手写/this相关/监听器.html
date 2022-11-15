@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+    <button id="test">test</button>
+<body>
+    
+</body>
+    <script>
+        function Button(){
+            this.clicked=false
+            this.click=function(){
+                this.clicked=true
+                console.log(button.clicked,this)
+            }
+        }
+        var button=new Button()
+        console.log(button.click())
+        let elem= document.getElementById('test')
+        elem.addEventListener('click',button.click)
+        setTimeout(button.click,0)
+    </script>
+</html>

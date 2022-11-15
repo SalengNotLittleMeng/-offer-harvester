@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="inp">
+    <div id="content"></div>
+</body>
+    <script>
+        let data={
+
+        }
+        let input=document.getElementById('inp')
+        let content=document.getElementById('content')
+        input.addEventListener('input',function(e){
+                let param=this.value
+                let str=``
+                fetch(url,{
+                    body:'params=param'
+                }).then(res=>{
+                    res.forEach((item,index) => {
+                        let strItem=`${index}.${item.value}<br>`
+                        str+=strItem
+                    });
+                })
+                content.innerHTML=str
+        })
+    </script>
+</html>

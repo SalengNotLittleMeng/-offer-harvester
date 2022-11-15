@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    // 就类似这样一个题目，给你id，输入具体的地址，
+// 比如id是asdasfg直接输出浙江省，gh就是浙江省杭州市
+// 用dfs写出来后要求再用bfs写
+const cityData = [
+    {
+        name: '浙江省',
+        id: 'asdasfg',
+        children: [
+            {
+                name: '杭州市',
+                id: 'gh',
+                children: [
+                    {
+                        ...
+                    }
+                ]
+            },
+            {
+                name: '温州市',
+                id: 'asg',
+                children: [
+                    {
+                        ...
+                    }
+                ]
+            },
+        ],
+        ...
+    }
+]
+</body>
+    <script>
+        // 就类似这样一个题目，给你id，输入具体的地址，
+// 比如id是asdasfg直接输出浙江省，gh就是浙江省杭州市
+// 用dfs写出来后要求再用bfs写
+const cityData = [
+    {
+        name: '浙江省',
+        id: 'asdasfg',
+        children: [
+            {
+                name: '杭州市',
+                id: 'gh',
+                children: [
+                    {
+                    name: '沙县',
+                    id: 'sx',
+                    children: [
+                    ]
+                    }
+                ]
+            },
+            {
+                name: '温州市',
+                id: 'asg',
+            },
+        ],
+    }
+]
+// 深度优先算法
+    function FindAllDfs(data,key){
+        let result=''
+        function findAll(obj,str){
+        if(!obj.id){    
+            return false
+        }
+        str+=obj.name
+           if(obj.id==key){
+                result=str
+                return true
+            }
+          let children=obj.children || []
+          children.forEach(item=>{
+                findAll(item,str)
+        })
+        }
+        data.forEach(item=> {
+            findAll(item,'')
+        });
+    return result
+    }
+   console.log( FindAllDfs(cityData,'sx'))
+// 广度优先算法
+    </script>
+</html>

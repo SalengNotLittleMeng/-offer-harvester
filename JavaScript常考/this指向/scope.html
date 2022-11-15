@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>scope</h2>
+</body>
+    <script>
+var a = new String('0')
+function b() {
+  var c = new String('1')
+  var d = new String('2')
+  function e() {
+    console.log(c)
+  }
+  function f() {
+    console.log(d)
+  }
+  return f
+}
+a = b()
+console.log(a.prototype)
+
+function fa(){
+    var a=12
+    function fb(){
+        var b=1
+        function fc(){
+            console.log(fc.prototype)
+        }
+      function fd(){
+        console.log(a)
+        }
+        fc()
+    }
+    fb()
+}
+fa()
+    </script>
+</html>
