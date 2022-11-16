@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    寄生组合继承
+</body>
+    <script>
+        function Person(){
+            this.name='person'
+        }
+        function Child(...args){
+            Person.call(this,...args)
+            this.name='child'
+        }
+        Child.prototype=Object.create(Person.prototype)
+        Child.prototype.constructor=Child
+        let child=new Child()
+        console.log(child.name)
+    </script>
+</html>
+

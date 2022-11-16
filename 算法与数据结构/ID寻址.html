@@ -88,7 +88,36 @@ const cityData = [
         });
     return result
     }
-   console.log( FindAllDfs(cityData,'sx'))
+//    console.log( FindAllDfs(cityData,'sx'))
 // 广度优先算法
+    function FindAllBfs(data,key){
+        let result=''
+        let stack=data
+        function findAll(obj){
+            if(obj.id==key){
+                result=obj.name
+                return true
+            }
+            if(!obj.str){
+                obj.str=''
+            }
+            obj.str+=obj.name
+            return (obj.children || []).map(item=>{
+                     item.str=obj.str
+                    return item
+            })
+        }
+        while(stack.length!=0){
+            let temp=[]
+            for(let i=0;i<stack.length;i++){
+               let res= findAll(stack[i])
+                if(res===true){return res}
+               temp.push(...res) 
+            }   
+            stack=temp
+        }
+        return result
+    }
+    console.log( FindAllBfs(cityData,'asdasfg'))
     </script>
 </html>
