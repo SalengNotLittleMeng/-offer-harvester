@@ -80,8 +80,24 @@
 // obj.fun()     // cuggz
 // new obj.fun() 
 
+function Foo() {
+  getName = function() { console.log(1) }
+  return this
+}
+Foo.getName = function() { console.log(2) }
+Foo.prototype.getName = function() { console.log(3) }
+var getName = function() { console.log(4) }
+function getName() { console.log(5) }
+
+Foo.getName()  //2
+getName() //4
+Foo().getName() //1
+getName() //1
+// new (Foo.getName()) // 2
+console.log(new Foo().getName()) // 3,undefined
+
 // function Foo() {
-//   getName = function() { console.log(1) }
+//   this.getName = function() { console.log(1) }
 //   return this
 // }
 
@@ -90,28 +106,11 @@
 // var getName = function() { console.log(4) }
 // function getName() { console.log(5) }
 
-// Foo.getName()  //2
+// Foo.getName()   // 2
 // getName() //4
-// Foo().getName() //1
-// getName() //1
-// // new (Foo.getName()) // 2
-// console.log(new Foo().getName()) // 3,undefined
-
-function Foo() {
-  this.getName = function() { console.log(1) }
-  return this
-}
-
-Foo.getName = function() { console.log(2) }
-Foo.prototype.getName = function() { console.log(3) }
-var getName = function() { console.log(4) }
-function getName() { console.log(5) }
-
-Foo.getName()   // 2
-getName() //4
-Foo().getName()  // 1
-getName()  //1
-// new (Foo.getName()) //2 
-console.log(new Foo().getName()) //1 undefined
+// Foo().getName()  // 1
+// getName()  //1
+// // new (Foo.getName()) //2 
+// console.log(new Foo().getName()) //1 undefined
     </script>
 </html>

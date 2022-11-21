@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>返回所有长度为n的有效括号对</h2>
+</body>
+    <script>
+        let str="()"
+        function findVaild(n,str){
+            let result=[]
+        for(let i=0;i<str.length-n+1;i++){
+            let temp=str
+            let childStr=temp.slice(i,i+n)
+            console.log(childStr,i,n)
+            if(checkVaild(childStr)){
+                result.push(childStr)
+            }
+        }
+            function checkVaild(s){
+                let stack=[]
+                if(!s){return false}
+                for(let i=0;i<s.length;i++){
+                    if(s[i]=='('){
+                        stack.push(i)
+                    }else{
+                        if(stack.length==0){
+                            return false
+                        }
+                        stack.pop()
+                    }
+                }
+            return stack.length==0
+            }
+        return result
+        }
+    function findVaildStack(n,str){
+        let stack=[]
+        let result=[]
+        stack.push(-1)
+        for(let i=0;i<=str.length;i++){
+            const current=str[i]
+            if(current=='('){
+                stack.push(i)
+            }else{
+               let top=stack.pop()
+                if(stack.length==0){
+                    stack.push(i)
+                }else{
+                    console.log(stack,top,i)
+                    if(i-top+1==n){
+                        result.push(str.slice(i-1,i+n-1))
+                    }
+                }
+            }
+        }
+        return result
+    }
+    console.log(findVaildStack(2,str))
+    </script>
+</html>
