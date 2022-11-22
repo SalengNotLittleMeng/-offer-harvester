@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    柯里化
+</body>
+    <script>
+        // 实现sum函数 使得
+const initialSum = (x, y) => {
+  return x + y;
+}
+const curry = function (fn) {
+  return function curried (...args1) {
+    console.log(fn.length)
+      if (args1.length >= fn.length) {
+          return fn.apply(this, args1);
+      } else {
+          return function (...args2) {
+              return curried.apply(this, [...args1, ...args2]);
+          }
+      }
+  }
+}
+const sum = curry(initialSum);
+console.log(sum(2,3))// 5
+// sum(2)(3) // 5
+    </script>
+</html>
