@@ -7,7 +7,10 @@
     <title>Document</title>
 </head>
 <body>
-    柯里化
+    柯里化的作用：
+    <h2>提高适用性</h2>
+    <h2>改造多参数函数</h2>
+    <h2>延迟执行</h2>
 </body>
     <script>
         // 实现sum函数 使得
@@ -16,7 +19,7 @@ const initialSum = (x, y) => {
 }
 const curry = function (fn) {
   return function curried (...args1) {
-    console.log(fn.length)
+    console.log(fn.length,args1,args1.length)
       if (args1.length >= fn.length) {
           return fn.apply(this, args1);
       } else {
@@ -27,7 +30,7 @@ const curry = function (fn) {
   }
 }
 const sum = curry(initialSum);
-console.log(sum(2,3))// 5
-// sum(2)(3) // 5
+// console.log(sum(2,3))// 5
+sum(2)(3) // 5
     </script>
 </html>
