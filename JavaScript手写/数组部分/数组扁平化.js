@@ -2,9 +2,9 @@ const arr = [1, [2, [3, [4, [5, [6, [7]]]]]]]
 const res = arr.flat(Infinity);
 console.log(res)
 
-const flatten = arr => {
+const flatten = function(arr,deep=1) {
     return arr.reduce((pre, cur) => {
-        return pre.concat(Array.isArray(cur) ? flatten(cur) : cur)
+        return pre.concat(Array.isArray(cur)&&deep>0? flatten(cur,deep-1) : cur)
     }, [])
 }
 res2 = flatten(arr);
@@ -19,9 +19,9 @@ Array.prototype.my_flat = function() {
     }
     return arr;
 }
-console.log(arr.my_flat())
+// console.log(arr.my_flat())
 let ar = [
     [1, 2],
     [1, 2]
 ]
-console.log([].concat(...ar))
+// console.log([].concat(...ar))
