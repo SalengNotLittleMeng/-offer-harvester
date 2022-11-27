@@ -15,9 +15,14 @@
         }
     function throttle(fn,delay){
         let curtime=new Date().getTime()
+        let timer=null
         return function (...args){
             let nowTime=new Date().getTime()
+            timer=setTimeout(()=>{
+                fn.call(this,args)
+            })
             if(nowTime-curtime>=delay){
+                timer=null
                 curtime=new Date().getTime()
                 return fn.call(this,args)
             }
