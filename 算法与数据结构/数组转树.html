@@ -28,25 +28,47 @@
                 { id: '15', name: '小涛', pid: '06', job: '运维工程师' }
 ]
 
-    function arrayToTree(arr){
-        let map=new Map()
-        arr.forEach(item => {
-            map.set(item.id,item)
-        });
-    let len=arr.length
-    for(let i=0;i<len;i++){
-        let parent=map.get(arr[i]?.pid) 
-        if(parent){
-            if(parent.children?.length){
-                parent.children.push(arr[i])
-            }else{
-                parent.children=[arr[i]]
-            }
-            arr.splice(i,1)
-        }
-        }
-                return arr
-    }
+    // function arrayToTree(arr){
+    //     let map=new Map()
+    //     arr.forEach(item => {
+    //         map.set(item.id,item)
+    //     });
+    // let len=arr.length
+    // for(let i=0;i<len;i++){
+    //     let parent=map.get(arr[i]?.pid) 
+    //     if(parent){
+    //         if(parent.children?.length){
+    //             parent.children.push(arr[i])
+    //         }else{
+    //             parent.children=[arr[i]]
+    //         }
+    //         arr.splice(i,1)
+    //         i--
+    //     }
+    //     }
+    //             return arr
+    // }
     console.log(arrayToTree(data))
+
+
+function arrayToTree(data){
+    let map=new Map()
+    data.forEach(item=>{
+        map.set(item.id,item)
+    })
+    let len=data.length
+    for(let i=0;i<len;i++){
+        let parent=map.get(data[i]?.pid)
+        if(!parent){continue}
+        if(parent?.children){
+            parent.children.push(data[i])
+        }else{
+            parent.children=[data[i]]
+        }
+        data.splice(i,1)
+        i--
+    }
+    return data
+}
     </script>
 </html>
