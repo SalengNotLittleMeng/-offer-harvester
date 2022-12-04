@@ -10,14 +10,22 @@
     类型机制
 </body>
     <script>
-        function func(a={}){
-    console.log(a);
-}
+//         function func(a={}){
+//     console.log(a);
+// }
 
-func(undefined);
-func(null)
-func('')
-func(0)
-func([])
+// func(undefined);
+// func(null)
+// func('')
+// func(0)
+// func([])
+function change (o){ 
+  o.url = 'xxxx1' 
+  o= new Object()
+  o.url = 'xxxx2'  
+}
+let o = new Object(); 
+change(o)  
+console.log(o.url)
     </script>
 </html>
