@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+  <script>
+    class Menu {
+      constructor(options) {
+        this.$el = options.el;
+        this.data = options.data;
+        this.init()
+      }
+      init() {
+        if (!this.data instanceof Array) {
+          throw TypeError("data is array");
+        }
+        // this.data=
+      }
+      open() {}
+      closeAll() {}
+    createNode(){
+        return 
+    }
+      render() {}
+    }
+    let menu = new Menu({
+      el: document.getElementById("app"),
+      data: [
+        {
+          name: "第一部分",
+          children: [{ name: "1.1" }, { name: "1.2" }, { name: "1.3" }],
+        },
+        {
+          name: "第二部分",
+          children: [{ name: "2.1" }, { name: "2.2" }, { name: "2.3" }],
+        },
+        {
+          name: "第三部分",
+          children: [{ name: "3.1" }, { name: "3.2" }, { name: "3.3" }],
+        },
+      ],
+    });
+  </script>
+</html>
