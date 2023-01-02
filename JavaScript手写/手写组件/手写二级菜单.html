@@ -14,6 +14,7 @@
       constructor(options) {
         this.$el = options.el;
         this.data = options.data;
+        this.dom=null
         this.init()
       }
       init() {
@@ -24,10 +25,15 @@
       }
       open() {}
       closeAll() {}
-    createNode(){
-        return 
+    createNode(tag){
+        return document.createElement(tag)
     }
-      render() {}
+    createChildrenNode(child,parentNode){
+        parentNode.appendChild(child)
+    }
+      render() {
+        this.$el.appendChild()
+    }
     }
     let menu = new Menu({
       el: document.getElementById("app"),
@@ -46,5 +52,6 @@
         },
       ],
     });
+    menu.render()
   </script>
 </html>
