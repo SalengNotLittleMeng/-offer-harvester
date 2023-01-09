@@ -14,33 +14,127 @@
       constructor(options) {
         this.$el = options.el;
         this.data = options.data;
-        this.dom=null
-        this.init()
+        this.root = this.createNode("div");
+        this.initNode();
+        this.initEvent();
       }
-      init() {
+      initNode() {
         if (!this.data instanceof Array) {
           throw TypeError("data is array");
         }
-        // this.data=
+        const parentNodeList = this.data.map((opts) => {
+          const node = this.createNode("div");
+          node.innerText = opts.name;
+          return node;
+        });
+        parentNodeList.forEach((parentNode, index) => {
+          const nodeItemInfo = this.data[index];
+          const outerBoxNode = this.setOuterItemBoxNode(parentNode, index);
+          this.root.appendChild(parentNode);
+          this.appendChildrenNode(outerBoxNode, nodeItemInfo.children);
+        });
       }
-      open() {}
-      closeAll() {}
-    createNode(tag){
-        return document.createElement(tag)
-    }
-    createChildrenNode(child,parentNode){
-        parentNode.appendChild(child)
-    }
+      appendChildrenNode(parentNode, children) {
+        if (!children instanceof Array) {
+          return;
+        }
+        children.forEach((child) => {
+          const childNode = this.createNode("li");
+          childNode.innerText = child.name;
+          parentNode.appendChild(childNode);
+        });
+      }
+      setOuterItemBoxNode(node, _index) {
+        const outerBox = this.createNode("div", { _index });
+        node.appendChild(outerBox);
+        return outerBox;
+      }
+      initEvent() {
+        this.root.addEventListener("click", (e) => {
+          const target = e.target;
+          const parentIndex = target.getAttribute("_parentIndex");
+          if (target.tagName == "LI") {
+            this.eventBus(target, e, true);
+          } else {
+            this.eventBus(target, e);
+          }
+        });
+      }
+      eventBus(target, event, isChild) {
+        if (isChild) {
+          const parentNode = target.parentNode;
+          const childIndex = [].indexOf.call(parentNode.childNodes, target);
+          const parentIndex = parentNode.getAttribute("_index");
+          const callback =
+            this.data[parseInt(parentIndex)]?.children[childIndex]?.callback ||
+            function () {};
+          callback(event);
+          return;
+        }
+        const nodeList = target.childNodes;
+        if (nodeList.length < 2) {
+          return;
+        }
+        const index = nodeList[1].getAttribute("_index");
+        const callback = this.data[parseInt(index)]?.callback || function () {};
+        callback(event);
+        const nodeState = nodeList[1].style.display;
+        const currentState = nodeState == "none" ? "block" : "none";
+        nodeList[1].style.display = currentState;
+      }
+      createNode(tag, props) {
+        const node = document.createElement(tag);
+        if (!props) {
+          return node;
+        }
+        if (props instanceof Array) {
+          props.forEach((prop) => {
+            const key = Object.keys(prop)[0];
+            node.setAttribute(key, prop[key]);
+          });
+        } else {
+          const key = Object.keys(props)[0];
+          node.setAttribute(key, props[key]);
+        }
+        return node;
+      }
+      createChildrenNode(child, parentNode) {
+        parentNode.appendChild(child);
+      }
       render() {
-        this.$el.appendChild()
+        this.$el.appendChild(this.root);
+      }
     }
-    }
+
+    // 参数：name:要显示的内容，callback：点击时的回调，参数是事件参数event,children:二级列表的参数
     let menu = new Menu({
       el: document.getElementById("app"),
       data: [
         {
           name: "第一部分",
-          children: [{ name: "1.1" }, { name: "1.2" }, { name: "1.3" }],
+          callback: (e) => {
+            console.log("我是一级列表！", e);
+          },
+          children: [
+            {
+              name: "1.1",
+              callback: (e) => {
+                console.log("我是二级列表", e);
+              },
+            },
+            {
+              name: "1.2",
+              callback: (e) => {
+                console.log("我是二级列表", e);
+              },
+            },
+            {
+              name: "1.3",
+              callback: (e) => {
+                console.log("我是二级列表", e);
+              },
+            },
+          ],
         },
         {
           name: "第二部分",
@@ -52,6 +146,6 @@
         },
       ],
     });
-    menu.render()
+    menu.render();
   </script>
 </html>
