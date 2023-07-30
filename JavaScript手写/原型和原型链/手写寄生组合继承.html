@@ -10,17 +10,24 @@
     寄生组合继承
 </body>
     <script>
-        function Person(){
-            this.name='person'
-        }
-        function Child(...args){
-            Person.call(this,...args)
-            this.name='child'
-        }
-        Child.prototype=Object.create(Person.prototype)
-        Child.prototype.constructor=Child
-        let child=new Child()
-        console.log(child.name)
+function Parent() {
+  this.name = 'parent';
+}
+
+Parent.prototype.sayName = function() {
+  console.log(this.name);
+}
+
+function Child() {
+  Parent.call(this);
+  this.name = 'child';
+}
+
+Child.prototype = Object.create(Parent.prototype);
+Child.prototype.constructor = Child;
+
+var child = new Child();
+child.sayName(); // 'child'
     </script>
 </html>
 

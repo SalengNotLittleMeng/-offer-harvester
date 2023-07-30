@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    手写CO
+</body>
+<script>
+    function wait(ms) {
+  return new Promise(resolve => setTimeout(()=>{
+    console.log('timing')
+    resolve('key')
+  }, ms));
+}
+
+function* generatorFunction() {
+  console.log('Start');
+    const temp=  yield wait(1000);
+  console.log('End',temp);
+}
+function co(generatorFunction) {
+    const generator=generatorFunction()
+    const result=generator.next()
+    function handler(result){
+        if(result.done){
+        return Promise.resolve(result.value)
+    }
+    Promise.resolve(result.value).then(res=>{
+        return handler(generator.next(res))
+    }).catch(err=>{
+        return handler(generator.next(err))
+    })
+    }
+    handler(result)
+}
+co(generatorFunction)
+</script>
+</html>
