@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 给个字符数组，返回一个对象（Object<string, boolean>），如果字符出现1次，值为false，出现两次以上，值为true -->
+</body>
+    <script>
+        let string=['a','b','c','d','e','f','g','a','b','a']
+        Array.prototype.toObject=function(){
+            const array=this
+            let map=new Map()
+            let result={}
+            for(let i=0;i<array.length;i++){
+            map.set(array[i],map.has(array[i])?map.get(array[i])+1:1)
+                if(map.has(array[i])&&map.get(array[i])==1){
+                    result[array[i]]=false
+                }else if(map.has(array[i])&&map.get(array[i])>2){
+                     result[array[i]]=true
+                }else if(map.has(array[i])){
+                    delete result[array[i]]
+                }
+            }
+            return result
+        }
+        console.log(string.toObject())
+    </script>
+</html>

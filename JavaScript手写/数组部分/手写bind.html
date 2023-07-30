@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>手写bind函数</div>
+</body>
+<script>
+    let obj = {
+        name: 'xiaoxiaomeng',
+        say: function() {
+            console.log(arguments)
+            console.log(this.name)
+        }
+    }
+    let obj2 = {
+            name: 'miaomaiozi'
+        }
+        // obj.say();
+        // obj.say.call(obj2, 1, 2, 3);
+        // obj.say.apply(obj2, [1, 2, 3]);
+        // let sayclone = obj.say.bind(obj2, 1, 2, 3);
+        // sayclone();
+
+    // 原生JavaScript实现bind函数
+    Function.prototype.mybind = function(objThis, ...params) { //将我们手写的函数挂载到函数的原型链上，让所有函数都可以调用
+        const thisFn = this; //保存当前调用的函数
+        let funcForBind = (...secondparams) => {
+            const isNew = this instanceof funcForBind; //构造函数的优先级比bind高，如果用new执行构造函数，this会指向其本身，因此要先判断是否是构造函数
+            const thisArg = isNew ? this : objThis; //如果是构造函数，this指向其本身，否则将this绑定到第一个参数上
+            return thisFn.call(thisArg, ...params, ...secondparams)
+        }
+        funcForBind.prototype = Object.create(thisFn.prototype) //将调用函数的原型链复制一份赋值给被返回的函数
+        return funcForBind
+    }
+    let sayclone = obj.say.mybind(obj2, 1, 2, 3);
+    sayclone();
+    // 原生JavaScript实现call
+    Function.prototype.mycall = function(thisArg, ...arr) {
+        if (thisArg === null || thisArg === undefined) {
+            thisArg = window; //如果第一个参数为空，则默认为window
+        } else {
+            const specialMethod = Symbol('anything'); //构造一个独一无二的方法（symbol类型）来装载调用的函数
+            thisArg[specialMethod] = this; //让装载的函数作为第一个参数的方法，此时方法内部的this指向第一个参数，等号后面的this就是调用call方法的函数
+            let result = thisArg[specialMethod](...arr); //返回这个函数的结果
+            delete thisArg[specialMethod]; //清除这个方法
+            return result;
+        }
+    }
+    obj.say.mycall(obj2, 1, 2, 3);
+</script>
+
+</html>

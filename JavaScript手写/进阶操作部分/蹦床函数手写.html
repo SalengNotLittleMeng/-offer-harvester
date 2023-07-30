@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>蹦床函数可以解决调用栈过大的问题，将递归转化为循环</h2>
+</body>
+    <script>
+     function  trampoline(fn){
+        while(fn instanceof Function){
+            fn=fn()
+        }
+        return fn
+    }
+    console.log(  ['1', '2', '3'].map((item,index)=>parseInt(item,index)) )
+    </script>
+</html>

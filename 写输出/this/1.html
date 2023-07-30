@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+    <script>
+//         var a = 20;
+// function fn() {
+//   console.log(this.a);
+// }
+// fn();
+
+
+// var a = 20;
+// function fn() {
+//   function foo() {
+//     console.log(this.a);
+//   }
+//   foo();
+// }
+// fn();
+
+// var a = 20;
+// var obj = {
+//   a: 10,
+//   c: this.a + 20,
+//   fn: function () {
+//     return this.a;
+//   }
+// }
+
+// console.log(obj.c);
+// console.log(obj.fn());
+
+// 'use strict';
+// var a = 20;
+// function foo() {
+//   var a = 1;
+//   var obj = {
+//     a: 10,
+//     c: this.a + 20,
+//     fn: function () {
+//       return this.a;
+//     }
+//   }
+//   return obj.c;
+// }
+// // console.log(foo());    // ？
+// console.log(window.foo());  // ?
+
+// function foo() {
+//   console.log(this.a)
+// }
+
+// function active(fn) {
+//   fn(); // 真实调用者，为独立调用
+// }
+
+// var a = 20;
+// var obj = {
+//   a: 10,
+//   getA: foo
+// }
+
+// active(obj.getA);
+
+// var obj = { 
+//   name : 'cuggz', 
+//   fun : function(){ 
+//     console.log(this)
+//     console.log(this.name); 
+//   } 
+// } 
+// obj.fun()     // cuggz
+// new obj.fun() 
+
+function Foo() {
+  getName = function() { console.log(1) }
+  return this
+}
+Foo.getName = function() { console.log(2) }
+Foo.prototype.getName = function() { console.log(3) }
+var getName = function() { console.log(4) }
+function getName() { console.log(5) }
+Foo.getName() 
+getName() 
+Foo().getName() 
+getName() 
+console.log(new Foo().getName())
+
+Foo.getName()  //2
+getName() //4
+Foo().getName() //1
+getName() //1
+// new (Foo.getName()) // 2
+console.log(new Foo().getName()) // 3,undefined
+
+// function Foo() {
+//   this.getName = function() { console.log(1) }
+//   return this
+// }
+
+// Foo.getName = function() { console.log(2) }
+// Foo.prototype.getName = function() { console.log(3) }
+// var getName = function() { console.log(4) }
+// function getName() { console.log(5) }
+
+// Foo.getName()   // 2
+// getName() //4
+// Foo().getName()  // 1
+// getName()  //1
+// // new (Foo.getName()) //2 
+// console.log(new Foo().getName()) //1 undefined
+    </script>
+</html>

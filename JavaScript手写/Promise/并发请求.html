@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <h1>并发请求</h1>
+</body>
+    <script>
+// 实现一个批量请求函数 multiRequest(urls, maxNum)，要求如下：
+// • 要求最大并发数 maxNum
+// • 每当有一个请求返回，就留下一个空位，可以增加新的请求
+// • 所有请求完成后，结果按照 urls 里面的顺序依次打出
+        function  multiRequest(urls, maxNum){
+            let count=0
+            let result=[]
+            return new Promise(function(resolve,reject){
+                while(count<maxNum){
+                doAjax()
+            }
+            function doAjax(){
+                if(result.length==urls.length){
+                    resolve(result)
+                    return
+                }
+                const url=urls[count]
+                fetch(url).then(res=>{
+                    result[count]=res
+                }).catch(err=>{
+                    result[count]=err
+                }).finally(()=>{
+                    doAjax()
+                    count++
+                })
+            }
+            })
+        }
+    </script>
+</html>

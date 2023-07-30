@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    深拷贝完整版
+</body>
+    <script>
+        function deepClone(obj,set=new WeakSet()){
+            if(typeof obj!=="object"){
+                return obj
+            }
+            if(obj===null){
+                return obj
+            }
+            if(set.has(obj)){
+              return obj
+            }
+            set.add(obj)
+            if(obj instanceof Date){return new Date(obj)}
+            if(obj instanceof RegExp){return new RegExp(obj)}
+            Reflect.ownKeys(obj).forEach(key=>{
+                obj[key]=deepClone(obj[key])
+            })
+            return obj
+        }
+    let object={
+        a:1,
+        b:function(a){
+            console.log(a)
+        },
+        c:()=>{
+            console.log('hello')
+        },
+        d:'hello',
+        e:null,
+        f:new Date().getTime(),
+        g:/\w/,
+        h:[1,2,3,4,5],
+        i:Symbol('sym')
+    }
+    let j=Symbol('j')
+    object[j]='j'
+    let b=deepClone(object)
+    console.log(b,object)
+    </script>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    url从浏览器输入栏回车到出现页面发生了什么？<br>
+    <li>输入www.baidu.com</li>
+    <li>将域名通过DNS转化成IP地址（第二次会走浏览器缓存）</li>
+    <li>建立连接(三次握手四次挥手)
+        <ol>客户端向服务端发送请求，等待服务端确认</ol>
+        <ol>服务端向客户端回复</ol>
+        <ol>客户端收到服务端的回复后，向服务端再次确认</ol>
+    </li>
+    <li>客户端获取到数据，渲染页面
+        <ol>同时渲染html的dom树和css的结构体</ol>
+        <ol>dom树和结构体结合形成render-tree</ol>
+        <ol>浏览器计算布局信息，生成layout-tree</ol>
+        <ol>浏览器调用引擎进行绘制，形成用户界面</ol>
+    </li>
+    <li>四次挥手</li>
+</body>
+</html>

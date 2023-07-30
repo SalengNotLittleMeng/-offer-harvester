@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    寄生组合继承
+</body>
+    <script>
+function Parent() {
+  this.name = 'parent';
+}
+
+Parent.prototype.sayName = function() {
+  console.log(this.name);
+}
+
+function Child() {
+  Parent.call(this);
+  this.name = 'child';
+}
+
+Child.prototype = Object.create(Parent.prototype);
+Child.prototype.constructor = Child;
+
+var child = new Child();
+child.sayName(); // 'child'
+    </script>
+</html>
+

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    promise.all
+</body>
+    <script>
+        // Promise.myAll=function(arr){
+        //     return new Promise(function(reslove,reject){
+        //                    if(!Array.isArray(arr)){
+        //             throw new TypeError('arr could be a Array')
+        //         }
+        //     let len =arr.length
+        //     let resultList=[]
+        //     let count=0
+        //     for(let i=0;i<len;i++){
+        //         Promise.resolve(arr[i]).then(res=>{
+        //             count++
+        //             resultList[i]=res
+        //             if(count==len){
+        //              reslove(resultList)
+        //             }
+        //         }).catch(err=>{
+        //             reject(err)
+        //         })
+        //     }
+        //     })
+        // }
+        Promise.myAll=function(array){
+        if(!array instanceof Array){
+            throw TypeError('need array')
+        }
+            return new Promise(function(resovle,reject){
+                let result=[]
+                for(let i=0;i<array.length;i++){
+                    Promise.resolve(array[i]).then(res=>{
+                    if(result.length==array.length){
+                        resovle(result)
+                    }
+                    result[i]=res
+                    }).catch(err=>{
+                        reject(err)
+                    })
+                }
+            })
+        }
+let p1 = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve(1)
+    }, 1000)
+})
+let p2 = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve(2)
+    }, 2000)
+})
+let p3 = new Promise(function (resolve, reject) {
+    setTimeout(function () {
+        resolve(3)
+    }, 3000)
+})
+Promise.myAll([p3, p1, p2]).then(res => {
+    console.log(res) // [3, 1, 2]
+})
+    </script>
+</html>

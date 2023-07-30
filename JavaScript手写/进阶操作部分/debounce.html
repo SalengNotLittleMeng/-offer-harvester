@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>前端</div>
+    <div style="width: 1680px;height:100px;background-color: aqua;"></div>
+    <input type="text"><button id="button"></button>
+
+    <script>
+        let btn = document.getElementById("button");
+        btn.addEventListener('click', debounce(subit, 2000), false)
+            // btn.addEventListener('click', subit, false)
+
+        function subit(e) {
+            console.log(e)
+            console.log("我被提交了")
+        }
+
+        function debounce(fn, timer) {
+            //由于监听时间的回调函数返回的必须是一个函数，因此return之前的部分会在也页面加载时立即执行，相当于初始化
+            let t = null;
+            return function() {
+                // console.log(this) //等价于btn调用了闭包函数，this指向btn
+                //第一次执行时t的值为null，因此第一次点击时firstclick的值是true
+                let firstclick = !t;
+                //如果t的值的false（null），清除延时器
+                if (t) {
+                    clearTimeout(t)
+                }
+                //第一次firstclick取的值是true，会立即执行函数
+                if (firstclick) {
+                    //这里我们的的fn中可能会用到e等window对象，
+                    // 但在包装函数中，e会变成一个形参，当出现多参数时会混乱
+                    // 因此我们需要把arguments的类数组对象绑定为fn的第二个参数，arguments，
+                    //此时this指向触发函数的button，因此绑定的argument就是button的参数列表，也就是该函数原本的参数列表
+                    fn.apply(this, arguments)
+                }
+                //给t赋值，如果在timer的时间里计时器没有被清除，那么t的值被重置，重新恢复最初状态
+                t = setTimeout(() => {
+                    t = null;
+                }, timer);
+
+            }
+        }
+    </script>
+</body>
+
+</html>

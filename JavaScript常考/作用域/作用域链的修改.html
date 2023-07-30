@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <h1>作用域链修改</h1>
+</body>
+    <script>
+function fn(obj){
+  with(obj){
+    a = 2
+  }
+}
+var f1 = {a:3}
+var f2 = {b:3}
+
+// fn(f1)
+// console.log(f1.a) // 2
+
+fn(f2)
+console.log(f2.a)  // 输出undefined 
+console.log(a) // 2 
+
+    </script>
+</html>

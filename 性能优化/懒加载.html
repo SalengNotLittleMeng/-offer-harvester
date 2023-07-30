@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <h2>懒加载</h2>
+        <img id="img" src="" data-src="https://scpic.chinaz.net/files/pic/pic9/202009/apic27858.jpg" alt="">
+</body>
+<style>
+    img{
+        position: relative;
+        top:2000px;
+        height: 500px;
+        width: 300px;
+    }
+    body{
+        overflow: scroll;
+    }
+</style>
+    <script>
+        function lazyLoad(imgId){
+            console.log("222")
+           const img=document.getElementById("img")
+            let seeHeight=document.documentElement.clientHeight; //视口可见区
+            let scrollTop=document.documentElement.scrollTop || document.body.scrollTop; //滚动条滚动的距离
+             if(img.src!=""&&img.offsetTop<seeHeight+scrollTop){
+                    const imgUrl=img.getAttribute("data-src")
+                    img.setAttribute("src",imgUrl)
+                    document.removeEventListener("scroll",lazyLoad)
+            }
+        }
+    document.addEventListener("scroll",lazyLoad)
+    </script>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>手写bind</h2>
+</body>
+    <script>
+        Function.prototype.myBind=function(context,...arg){
+            let args=[...arg]
+            let fn=this
+            return function MyFunc(...rest){
+                if(context instanceof MyFunc){
+                    context=this
+                }
+                return fn.call(context,...args.concat(...rest))
+            }
+        }
+            var a=10
+            let obj={
+                a:12
+            }
+            function fn(res){
+                console.log(this,res)
+            }
+            fnc=fn.myBind(obj,12)
+            fncc=fn.bind(obj,12)
+            fn()
+            fnc(123)
+            fncc(123)
+    </script>
+</html>

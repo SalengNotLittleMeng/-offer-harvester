@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>this指向问题</h2>
+    <h3>this的指向是在函数被调用的时候确定的</h3>
+    <h3>thisz永远指向当前作用域，或者说是指向上一级</h3>
+</body>
+ <script>
+    function a(){
+        console.log(this)
+    }
+    a()// 指向window,a函数会被挂载window对象上执行，等价于window.a()
+    let b={
+        name:"b",
+        a:function(){
+            console.log(this)
+        }
+    }
+    b.a()  // 指向b
+    let name="window"
+    var obj={
+        name:'obj',
+        fn:function(){
+        console.log(this.name)
+        }
+    }
+    obj.fn() //obj
+    window.obj.fn() //obj
+    // var j={
+    //     a:10,
+    //     b:{
+    //         a:12,
+    //         fn:function(){
+    //             console.log(this.a)
+    //         }
+    //     }
+    // }
+    // j.b.fn() //12
+    var j={
+        a:10,
+        b:{
+            a:12,
+            fn:function(){
+                console.log(this)
+                return {
+                    fn1:function(){
+                    console.log(this)
+                    }
+                }
+            }
+        }
+    }
+// 箭头函数的this是外层函数的this，如果外层没有函数，则指向window
+j.b.fn().fn1() //window
+
+var id=66
+function fn5(){
+    setTimeout(()=>{
+        console.log(this.id)
+    },500)
+}       
+fn5() //66
+fn5.call({id:22}) //22
+
+var A = 20;
+function fn1() {
+  function foo() {
+    console.log(this.A);
+  }
+  foo();
+}
+var obj1 = {
+   A: 10,
+  c:  function(){ console.log(this); return this.A + 20}(),
+  c1:this.A+20 ,   
+  fn: function () {
+    return this.A;
+  }
+}
+// 在这个例子里c1是一个表达式，等价于c,这个自我执行的函数的this是window，因此c1的this也指向window
+console.log(obj1.c); //40
+// this是函数调用时确定的，跟return后的环境无关
+console.log(obj1.fn());  //10
+fn1(); //20 函数实际的调用者是window
+</script>
+</html>

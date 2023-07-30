@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    手写call
+</body>
+    <script>
+        Function.prototype.myCall=function(context,...args){
+            if(typeof this!=="function"){
+                    throw TypeError('this should be a function')
+            }
+            if(context===null || context ===undefined){
+                context=window
+            }
+            const type=typeof context
+            switch (type){
+                case 'string': 
+                    context=new String(context)
+                    break;
+                case 'boolean':
+                    context=new Boolean(context)
+                    break;
+                case 'number':
+                    context=new Number(context)
+                    break;
+            }
+            let fn=Symbol('fn')
+            context[fn]=this
+            let result=context[fn](...args)
+            delete context[fn]
+            return result
+        }
+        var a=10
+        let obj={
+            a:12
+            }
+        function fn(...args){
+            console.log(this)
+        }
+    fn()
+    fn.myCall(1,1,2,3,4)
+    fn.call(1)
+    </script>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>栈</h2>
+</body>
+    <script>
+// 实现一个栈，要有入栈、出栈的方法，和length属性（只读）
+        class Stack{
+            constructor(array=[]){
+                this.stack=array
+                let len=array.length
+                this.getterLength=function(){
+                    return len
+                }
+                this.setterLength=function(value){
+                    len+=value
+                }
+                Object.defineProperty(this,'length',{
+                    get:function(){
+                       return this.getterLength()
+                    },
+                    set:function(val){
+                        return
+                    }
+                })
+            }
+            push(value){
+                this.stack[this.getterLength()]=value
+                this.setterLength(1)
+            }
+            pop(){
+                let result= this.stack[this.getterLength()-1]
+                this.stack[this.getterLength()-1]=undefined
+                this.setterLength(-1)
+                return result
+            }
+        }
+        let st=new Stack()
+        st.push(1)
+   st.push(1)
+   st.push(1)
+   st.push(1)
+   st.pop()
+        st.length=111
+        console.log(st.length)
+    </script>
+</html>

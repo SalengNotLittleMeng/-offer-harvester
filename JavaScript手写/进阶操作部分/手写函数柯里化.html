@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+        <div>函数柯里化</div>
+</body>
+    <script>
+        function curry(fn){
+            let list=[]
+            return function temp(...args){
+                if(args.length!=0){
+                    list=list.concat(args)
+                    return temp
+                }else{
+                console.log(1111,list)
+                    let res=fn.call(this,...list)
+                   return res
+                }
+            }
+        }
+    function add(...args){
+        return args.reduce((pre,aft)=>{
+            return pre+aft
+        })
+    }
+    let curryAdd=curry(add)
+        console.log(curryAdd(1)(2)(3)())
+        console.log(add(1,2,3))
+    </script>
+</html>

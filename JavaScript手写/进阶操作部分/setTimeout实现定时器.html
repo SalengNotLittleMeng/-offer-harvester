@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>定时器</h2>
+</body>
+    <script>
+function interval(fn, wait) {
+//内部定义一个递归函数
+let timer = null;
+  let interfun = function () {
+      //每次执行将fn放在全局作用域中执行
+    fn.call(null);
+    //递归调用自己
+    timer = setTimeout(interfun,wait);
+  }
+  //调用递归函数
+  timer = setTimeout(interfun,wait);
+return timer
+}
+//使用方式
+let timer=interval(()=>{console.log('aa')},1000)
+//清除定时器
+window.clearTimeout(timer);
+    </script>
+</html>
