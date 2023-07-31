@@ -14,29 +14,38 @@
 // • 要求最大并发数 maxNum
 // • 每当有一个请求返回，就留下一个空位，可以增加新的请求
 // • 所有请求完成后，结果按照 urls 里面的顺序依次打出
-        function  multiRequest(urls, maxNum){
+        async function  multiRequest(urls, maxNum){
             let count=0
             let result=[]
             return new Promise(function(resolve,reject){
-                while(count<maxNum){
-                doAjax()
-            }
-            function doAjax(){
-                if(result.length==urls.length){
-                    resolve(result)
-                    return
+                let num=0
+                while(num<maxNum){
+                     doAjax()
+                     num++
                 }
+            async function doAjax(){
                 const url=urls[count]
                 fetch(url).then(res=>{
                     result[count]=res
                 }).catch(err=>{
                     result[count]=err
                 }).finally(()=>{
+                if(result.length==urls.length){
+                    resolve(result)
+                    return
+                }
+                count++
                     doAjax()
-                    count++
                 })
             }
             })
         }
+        const requestList=[]
+        for(let i=0;i<10;i++){
+            requestList.push('http://127.0.0.1:5500/JavaScript手写/Promise/static/test.json')
+        }
+        multiRequest(requestList,3).then(res=>{
+            console.log(res)
+        })
     </script>
 </html>
