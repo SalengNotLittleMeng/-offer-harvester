@@ -44,8 +44,40 @@
         for(let i=0;i<10;i++){
             requestList.push('http://127.0.0.1:5500/JavaScript手写/Promise/static/test.json')
         }
-        multiRequest(requestList,3).then(res=>{
+        mutiFetch(requestList,3).then(res=>{
             console.log(res)
         })
+
+
+
+       function mutiFetch(urls,maxNum){
+        let reslut=[]
+        let index=0
+        return new Promise(reslove=>{
+            let num=0
+            let index=0
+            while(num<maxNum){
+                doFetch()
+                num++
+            }
+            function doFetch(){
+                url=urls[index]
+                fetch(url).then(res=>{
+                    reslut[index]=res
+                }).catch(e=>{
+                    reslut[index]=e
+                }).finally(()=>{
+                    console.log(reslut)
+                    if(reslut.length==urls.length){
+                        reslove(reslut)
+                        return
+                    }else{
+                        index++
+                        doFetch()
+                    }
+                })
+            }
+        })
+       }
     </script>
 </html>

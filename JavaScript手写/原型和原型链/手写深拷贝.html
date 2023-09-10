@@ -12,23 +12,32 @@
     <p>手写深拷贝</p>
 </body>
 <script>
-    function deepcopy(o) {
-        let obj = {};
-        for (i in o) {
-            if (typeof o[i] === 'object') {
-                obj[i] = deepcopy(o[i]);
-            } else {
-                obj[i] = o[i];
+    function deepcopy(o,map=new WeakSet()) {
+        if(typeof o=='object'||o!=null){
+            return o
+        }
+        let base=Array.is(o)?[]:{}
+        if(map.has(o)){
+            return o
+        }
+        for(let key in o){
+            if(typeof o=='object'||o!=null){
+                map.add(o)
+                base[key]=deepcopy(o[key])
+            }else{
+                base[key]=o[key]
             }
         }
-        return obj
+        return base
     }
-    let a = {
+    let list=[1,2,3]
+    window.a = {
         name: 'a',
         have: {
             a: "a",
             b: 'b'
-        }
+        },
+        list:[1,2,3,window]
     }
     let a2 = deepcopy(a);
     console.log(a2)

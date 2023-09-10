@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>解析URL参数</div>
+</body>
+<script>
+    const url='https://juejin.cn/post/6946022649768181774?a=1&b=34'
+    const object={}
+    new URLSearchParams(new URL(url).search).forEach((value,key)=>{
+        object[key]=value
+    })
+    console.log(object)
+</script>
+</html>

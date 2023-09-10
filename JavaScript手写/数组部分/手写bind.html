@@ -45,15 +45,55 @@
     Function.prototype.mycall = function(thisArg, ...arr) {
         if (thisArg === null || thisArg === undefined) {
             thisArg = window; //如果第一个参数为空，则默认为window
-        } else {
+        } 
             const specialMethod = Symbol('anything'); //构造一个独一无二的方法（symbol类型）来装载调用的函数
             thisArg[specialMethod] = this; //让装载的函数作为第一个参数的方法，此时方法内部的this指向第一个参数，等号后面的this就是调用call方法的函数
             let result = thisArg[specialMethod](...arr); //返回这个函数的结果
             delete thisArg[specialMethod]; //清除这个方法
             return result;
-        }
+        
     }
     obj.say.mycall(obj2, 1, 2, 3);
+
+
+
+
+
+
+
+// 手写bind
+Function.prototype.myBind=function(context,...args){
+    const fn=this
+   function Fn(...params){
+     if(this instanceof Fn){
+        context=this
+     }  else{
+       return fn.call(context,...args,...params)
+     } 
+   }
+   Fn.prototype=Object.create(fn.prototype)
+   return Fn
+
+}
+
+Function.prototype.myCall=function(context,...args){
+    if(context===undefined||context===null){
+        context=window
+    }
+    const fn=Symbol('bind')
+    context[fn]=this
+    const reslut=context[fn](...args)
+    delete context[fn]
+    return reslut
+}
+
+
+
+
+
+
+
+
 </script>
 
 </html>

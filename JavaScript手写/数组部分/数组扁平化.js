@@ -1,11 +1,14 @@
-const arr = [1, [2, [3, [4, [5, [6, [7]]]]]]]
+const arr = [1, 1,[2, [3, [4, [5, [6, [7]]]]]]]
 const res = arr.flat(Infinity);
-console.log(res)
+// console.log(res)
 
-const flatten = function(arr,deep=1) {
-    return arr.reduce((pre, cur) => {
-        return pre.concat(Array.isArray(cur)&&deep>0? flatten(cur,deep-1) : cur)
-    }, [])
+const flatten=function(arr){
+   return arr.reduce((pre,cur)=>{
+        if(Array.isArray(cur)){
+            return [...pre].concat(flatten(cur))
+        }
+        return [...pre,cur]
+    },[])
 }
 res2 = flatten(arr);
 console.log(res2)
@@ -25,3 +28,12 @@ let ar = [
     [1, 2]
 ]
 // console.log([].concat(...ar))
+
+function getFlatten(array){
+    let res=[]
+    while(array.some(item=>Array.isArray(item))){
+        array=res.concat(...array)
+    }
+    return array
+}
+// console.log(getFlatten(arr))

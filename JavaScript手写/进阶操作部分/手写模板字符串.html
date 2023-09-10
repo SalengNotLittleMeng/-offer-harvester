@@ -8,19 +8,27 @@
 </head>
 <body>
     手写模板字符串
+    <div id="app">
+        hello{{data}},我是{{name}}!!
+    </div>
 </body>
     <script>
-        let str='123{{hello}}{{world}}'
-        let hello=456
-        function templateString(string,data){
-            const reg=/\{\{(\w+)\}\}/
-            if(reg.test(string)){
-                let key=reg.exec(string)[1]
-                string=string.replace(reg,data[key])
-                return templateString(string,data)
-            }
-            return string
+        const app=document.getElementById("app")
+        const string=app.innerHTML
+        let data={
+            data:'前端',
+            name:'小明'
         }
-        console.log(templateString(str,{hello:45,world:67}))
+        function template(string,data){
+        const reg=/\{\{(\w+)\}\}/
+        if(reg.test(string)){
+          let key=reg.exec(string)[1]
+          console.log(reg.exec(string))
+           string= string.replace(reg,data[key])
+            return template(string,data)
+        }
+        return string
+        }
+        app.innerHTML= template(string,data)
     </script>
 </html>

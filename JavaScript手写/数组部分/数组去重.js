@@ -40,3 +40,8 @@ for (let i = 0; i < arr.length; i++) {
     }
 }
 console.log(con3)
+let list=[1,1,1,1,2,3,4,5,5]
+list=list.filter((item,index,array)=>{
+    return array.indexOf(item)==index
+})
+console.log(list)

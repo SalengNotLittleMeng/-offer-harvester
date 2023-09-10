@@ -13,18 +13,29 @@
         function fn(){
             console.log('click!!!')
         }
-        function debounce(fn,wait){
+        function debounce(fn,wait,immediate){
             let timer=null
-            return function(...args){
+            let first=true
+            return function inner(...args){
+                const context=this
                 if(timer){
                     clearTimeout(timer)
-                    timer=null
                 }
-               timer=setTimeout(()=>{
-                    fn.call(this,args)
+                if(immediate&&first){
+                    fn.call(context,...args)
+                    first=false
+                }
+                timer=setTimeout(()=>{
+                    fn.call(context,...args)
+                    timer=null
+                    first=true
                 },wait)
             }
+            inner.cancle=function(){
+                timer=null
+            }
+
         }
-         let Fn=debounce(fn,1000)
+         let Fn=debounce(fn,1000,true)
     </script>
 </html>

@@ -32,5 +32,21 @@ const curry = function (fn) {
 const sum = curry(initialSum);
 // console.log(sum(2,3))// 5
 sum(2)(3) // 5
+
+
+const curry1=function(fn){
+    return function curried(...args){
+        if(args.length>=fn.length){
+           return fn.call(this,...args)
+        }else{
+            return function(...args1){
+                return curried(...args,...args1)
+            }
+        }
+    }
+}
+sum1=curry1(initialSum)
+console.log(sum1(2)(3))
+
     </script>
 </html>

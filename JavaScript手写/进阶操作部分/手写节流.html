@@ -13,21 +13,29 @@
         function fn(){
             console.log('click')
         }
-    function throttle(fn,delay){
-        let curtime=new Date().getTime()
+    function throttle(fn,delay,fin){
+        let pre=new Date().getTime()
+        let use=true
         let timer=null
-        return function (...args){
-            let nowTime=new Date().getTime()
-            timer=setTimeout(()=>{
-                fn.call(this,args)
-            })
-            if(nowTime-curtime>=delay){
+        return function Fn(...args){
+            let cur=new Date().getTime()
+            if(cur-pre>=delay&&use){
+                fn.call(this,...args)
+                pre=cur
                 timer=null
-                curtime=new Date().getTime()
-                return fn.call(this,args)
             }
+            if(timer){
+                clearTimeout(timer)
+               }
+                timer=setTimeout(()=>{
+                fn.call(this,...args)
+            },delay)
+        }
+        Fn.cancle=function(){
+            use=false
+            clearTimeout(timer)
         }
     }
-    let fnc=throttle(fn,1000)
+    let fnc=throttle(fn,1000,true)
     </script>
 </html>
